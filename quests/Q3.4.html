@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Q3.4 Wire an event trigger — Cloud Dojo</title>
+<style>:root{--bg:#0d1117;--card:#161b22;--line:#30363d;--txt:#e6edf3;
+--mut:#8b949e;--grn:#3fb950;--amb:#d29922;--blu:#58a6ff;--pur:#bc8cff}
+*{box-sizing:border-box}body{background:var(--bg);color:var(--txt);
+font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;margin:0;
+padding:24px;max-width:860px;margin-inline:auto;line-height:1.6}
+.crumb{margin-bottom:14px;font-size:.9rem}.crumb a{color:var(--blu);text-decoration:none}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:18px}
+.hero h1{font-size:1.4rem;margin:0 0 6px}.meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+color:var(--mut);font-size:.9rem}
+.pill{padding:2px 10px;border-radius:999px;font-size:.8rem;border:1px solid var(--line)}
+.pill.done{color:var(--grn);border-color:var(--grn)}.pill.active{color:var(--amb);border-color:var(--amb)}
+.pill.locked{color:var(--mut)}
+article{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+article h2{font-size:1.05rem;margin:20px 0 8px;color:var(--blu)}article h2:first-child{margin-top:0}
+article p{margin:8px 0}article ul{margin:8px 0;padding-left:22px}article li{margin:4px 0}
+article a{color:var(--blu)}code{background:#21262d;padding:2px 6px;border-radius:6px;
+font-family:ui-monospace,monospace;font-size:.88em}
+pre{background:#010409;border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
+pre code{background:none;padding:0}
+.nav{display:flex;justify-content:space-between;gap:12px;margin:18px 0;flex-wrap:wrap}
+.nav-btn{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 14px;
+color:var(--txt);text-decoration:none;font-size:.9rem}.nav-btn:hover{border-color:var(--blu)}
+footer{color:var(--mut);font-size:.85rem;margin-top:16px}footer code{background:#21262d;
+padding:2px 6px;border-radius:6px}</style>
+</head>
+<body>
+<div class="crumb"><a href="../dashboard.html">← Cloud Dojo dashboard</a> · Phase 3 — Lambda Container Images</div>
+<div class="hero">
+<h1>Q3.4 — Wire an event trigger</h1>
+<div class="meta"><span class="pill locked">🔒 locked</span><span>30 XP</span><span>Phase 3 — Lambda Container Images</span></div>
+</div>
+<article>
+<h1>Q3.4 — Wire an event trigger (30 XP)</h1>
+<p><strong>Phase:</strong> Phase 3 — Lambda Container Images</p>
+<h2>Concept</h2>
+<p>Calling a function by hand is a demo; reacting to events is the point.</p>
+<p>An event source mapping connects a service like SQS to your function, so messages arriving in the queue trigger invocations automatically with no server in between.</p>
+<p>S3 can do the same: an object-created event invokes the function with details about the new object.</p>
+<p>You wire <code>dojo-queue</code> (or an S3 event) to your function, then send a message or upload a file and prove the code ran through logs or a DynamoDB write.</p>
+<p>This is serverless in its natural state: events in, code runs, state goes to a store, and you never touch a machine.</p>
+<h2>Uses</h2>
+<ul>
+<li>Processing uploaded files the moment they land in S3.</li>
+<li>Consuming a queue of background jobs without running a worker server.</li>
+<li>Reacting to application events across services with no polling code.</li>
+<li>Building event-driven pipelines where each step triggers the next.</li>
+<li>Decoupling producers from consumers so each side scales on its own.</li>
+</ul>
+<h2>Key info</h2>
+<ul>
+<li>SQS mapping: <code>aws --endpoint-url http://localhost:4566 lambda create-event-source-mapping --function-name dojo-lambda --event-source-arn &lt;queue-arn&gt;</code></li>
+<li>Then send a message to <code>dojo-queue</code> and watch the function fire.</li>
+<li>S3 route: configure a bucket notification that invokes the function on object creation.</li>
+<li>Prove it fired via the emulator&#x27;s container logs or a conditional write to DynamoDB.</li>
+<li>Batch size and a dead-letter queue are how real mappings handle failures.</li>
+<li>Check the mapping state: <code>aws --endpoint-url http://localhost:4566 lambda list-event-source-mappings</code></li>
+<li>Mappings are asynchronous; a failed batch can retry or land in a dead-letter queue.</li>
+<li>LocalStack supports SQS triggers, which is why this phase runs smoothest there.</li>
+<li>The S3 route needs a bucket notification configuration plus permission for S3 to invoke the function.</li>
+</ul>
+<h2>Pitfalls</h2>
+<ul>
+<li>Forgetting the execution role needs permission to read the queue or write to DynamoDB, which fails on real AWS.</li>
+<li>Expecting exactly-once delivery. SQS can deliver a message twice, so handlers must be idempotent.</li>
+<li>Wiring a trigger and never checking logs, so a function that errors looks like nothing happened.</li>
+</ul>
+<h2>Done check</h2>
+<p>paste the trigger evidence (log line or the written item).</p>
+<h2>Links</h2>
+<ul>
+<li>Event source mappings: https://docs.aws.amazon.com/lambda/latest/dg/invocation-eventsourcemapping.html</li>
+<li>Using Lambda with SQS: https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html</li>
+<li>Using Lambda with S3 events: https://docs.aws.amazon.com/lambda/latest/dg/with-s3.html</li>
+</ul>
+</article>
+<div class="nav"><span><a class="nav-btn" href="Q3.3.html">← Q3.3 Create + invoke</a></span><span><a class="nav-btn" href="Q4.1.html">Q4.1 VPC anatomy →</a></span></div>
+<footer>Source: <code>quests/Q3.4.md</code> · re-run <code>python3 shared/render_dashboard.py</code> after editing.</footer>
+</body>
+</html>

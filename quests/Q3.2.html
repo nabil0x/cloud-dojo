@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Q3.2 Push to the local ECR — Cloud Dojo</title>
+<style>:root{--bg:#0d1117;--card:#161b22;--line:#30363d;--txt:#e6edf3;
+--mut:#8b949e;--grn:#3fb950;--amb:#d29922;--blu:#58a6ff;--pur:#bc8cff}
+*{box-sizing:border-box}body{background:var(--bg);color:var(--txt);
+font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;margin:0;
+padding:24px;max-width:860px;margin-inline:auto;line-height:1.6}
+.crumb{margin-bottom:14px;font-size:.9rem}.crumb a{color:var(--blu);text-decoration:none}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:18px}
+.hero h1{font-size:1.4rem;margin:0 0 6px}.meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+color:var(--mut);font-size:.9rem}
+.pill{padding:2px 10px;border-radius:999px;font-size:.8rem;border:1px solid var(--line)}
+.pill.done{color:var(--grn);border-color:var(--grn)}.pill.active{color:var(--amb);border-color:var(--amb)}
+.pill.locked{color:var(--mut)}
+article{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+article h2{font-size:1.05rem;margin:20px 0 8px;color:var(--blu)}article h2:first-child{margin-top:0}
+article p{margin:8px 0}article ul{margin:8px 0;padding-left:22px}article li{margin:4px 0}
+article a{color:var(--blu)}code{background:#21262d;padding:2px 6px;border-radius:6px;
+font-family:ui-monospace,monospace;font-size:.88em}
+pre{background:#010409;border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
+pre code{background:none;padding:0}
+.nav{display:flex;justify-content:space-between;gap:12px;margin:18px 0;flex-wrap:wrap}
+.nav-btn{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 14px;
+color:var(--txt);text-decoration:none;font-size:.9rem}.nav-btn:hover{border-color:var(--blu)}
+footer{color:var(--mut);font-size:.85rem;margin-top:16px}footer code{background:#21262d;
+padding:2px 6px;border-radius:6px}</style>
+</head>
+<body>
+<div class="crumb"><a href="../dashboard.html">← Cloud Dojo dashboard</a> · Phase 3 — Lambda Container Images</div>
+<div class="hero">
+<h1>Q3.2 — Push to the local ECR</h1>
+<div class="meta"><span class="pill locked">🔒 locked</span><span>40 XP</span><span>Phase 3 — Lambda Container Images</span></div>
+</div>
+<article>
+<h1>Q3.2 — Push to the local ECR (40 XP)</h1>
+<p><strong>Phase:</strong> Phase 3 — Lambda Container Images</p>
+<h2>Concept</h2>
+<p>A function that lives only on your laptop is not a function.</p>
+<p>Lambda pulls images from ECR, the private container registry inside AWS, so the next step is to get your image into a registry.</p>
+<p>The flow is universal: create a repository, authenticate the Docker client, tag the image for that repository, and push.</p>
+<p>On the emulator, ECR is served locally, and the registry address looks like <code>localhost.localstack.cloud:4510/&lt;repo&gt;</code>.</p>
+<p>The <code>docker push</code> output ends with an immutable digest, a <code>sha256:...</code> value that identifies the exact bytes you uploaded.</p>
+<p>Tags like <code>:latest</code> are mutable pointers that move; the digest never does, which is why the done check asks for it.</p>
+<h2>Uses</h2>
+<ul>
+<li>Storing container images privately inside your AWS account.</li>
+<li>Feeding Lambda and ECS with a versioned, immutable image reference.</li>
+<li>Scanning images for vulnerabilities and applying lifecycle policies.</li>
+<li>Reproducing the same build-and-push flow against a local registry for testing.</li>
+<li>Sharing one image across many services without rebuilding it.</li>
+</ul>
+<h2>Key info</h2>
+<ul>
+<li>Create the repository: <code>aws --endpoint-url http://localhost:4566 ecr create-repository --repository-name dojo-lambda</code></li>
+<li>Tag for the local registry: <code>docker tag dojo-lambda localhost.localstack.cloud:4510/dojo-lambda:latest</code></li>
+<li>Log in and push following the emulator&#x27;s ECR instructions.</li>
+<li>Image URI shape: <code>&lt;registry&gt;/&lt;repo&gt;:&lt;tag&gt;</code></li>
+<li>The push output&#x27;s final line is a <code>digest:</code> value, the immutable identity of the image.</li>
+<li>On LocalStack the registry host is <code>localhost.localstack.cloud:4510</code>.</li>
+<li>List what you pushed: <code>aws --endpoint-url http://localhost:4566 ecr list-images --repository-name dojo-lambda</code></li>
+</ul>
+<h2>Pitfalls</h2>
+<ul>
+<li>Forgetting to tag with the registry hostname, so <code>docker push</code> tries Docker Hub instead.</li>
+<li>Chasing a moving <code>:latest</code> tag in production instead of pinning a digest.</li>
+<li>Not authenticating the Docker client before pushing, which fails with an auth error.</li>
+</ul>
+<h2>Done check</h2>
+<p>paste the push output&#x27;s final <code>digest:</code> line.</p>
+<h2>Links</h2>
+<ul>
+<li>Pushing an image to ECR: https://docs.aws.amazon.com/ecr/latest/userguide/docker-push-ecr-image.html</li>
+<li>What is Amazon ECR: https://docs.aws.amazon.com/ecr/latest/userguide/what-is-ecr.html</li>
+<li>Immutable image tags: https://docs.aws.amazon.com/AmazonECR/latest/userguide/image-tag-mutability.html</li>
+</ul>
+</article>
+<div class="nav"><span><a class="nav-btn" href="Q3.1.html">← Q3.1 Build a Lambda image</a></span><span><a class="nav-btn" href="Q3.3.html">Q3.3 Create + invoke →</a></span></div>
+<footer>Source: <code>quests/Q3.2.md</code> · re-run <code>python3 shared/render_dashboard.py</code> after editing.</footer>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Q3.1 Build a Lambda image — Cloud Dojo</title>
+<style>:root{--bg:#0d1117;--card:#161b22;--line:#30363d;--txt:#e6edf3;
+--mut:#8b949e;--grn:#3fb950;--amb:#d29922;--blu:#58a6ff;--pur:#bc8cff}
+*{box-sizing:border-box}body{background:var(--bg);color:var(--txt);
+font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;margin:0;
+padding:24px;max-width:860px;margin-inline:auto;line-height:1.6}
+.crumb{margin-bottom:14px;font-size:.9rem}.crumb a{color:var(--blu);text-decoration:none}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:18px}
+.hero h1{font-size:1.4rem;margin:0 0 6px}.meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+color:var(--mut);font-size:.9rem}
+.pill{padding:2px 10px;border-radius:999px;font-size:.8rem;border:1px solid var(--line)}
+.pill.done{color:var(--grn);border-color:var(--grn)}.pill.active{color:var(--amb);border-color:var(--amb)}
+.pill.locked{color:var(--mut)}
+article{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+article h2{font-size:1.05rem;margin:20px 0 8px;color:var(--blu)}article h2:first-child{margin-top:0}
+article p{margin:8px 0}article ul{margin:8px 0;padding-left:22px}article li{margin:4px 0}
+article a{color:var(--blu)}code{background:#21262d;padding:2px 6px;border-radius:6px;
+font-family:ui-monospace,monospace;font-size:.88em}
+pre{background:#010409;border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
+pre code{background:none;padding:0}
+.nav{display:flex;justify-content:space-between;gap:12px;margin:18px 0;flex-wrap:wrap}
+.nav-btn{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 14px;
+color:var(--txt);text-decoration:none;font-size:.9rem}.nav-btn:hover{border-color:var(--blu)}
+footer{color:var(--mut);font-size:.85rem;margin-top:16px}footer code{background:#21262d;
+padding:2px 6px;border-radius:6px}</style>
+</head>
+<body>
+<div class="crumb"><a href="../dashboard.html">← Cloud Dojo dashboard</a> · Phase 3 — Lambda Container Images</div>
+<div class="hero">
+<h1>Q3.1 — Build a Lambda image</h1>
+<div class="meta"><span class="pill locked">🔒 locked</span><span>40 XP</span><span>Phase 3 — Lambda Container Images</span></div>
+</div>
+<article>
+<h1>Q3.1 — Build a Lambda image (40 XP)</h1>
+<p><strong>Phase:</strong> Phase 3 — Lambda Container Images</p>
+<h2>Concept</h2>
+<p>Lambda normally runs a zip of code, but it also runs containers.</p>
+<p>You package a function as a Docker image that starts from AWS&#x27;s own Lambda base image, <code>public.ecr.aws/lambda/python:3.13</code>.</p>
+<p>That base supplies the Runtime Interface Client, the bridge between Lambda&#x27;s runtime and your handler, so your <code>Dockerfile</code> only needs to copy the handler and set the <code>CMD</code> to the handler name.</p>
+<p>The function itself is a small Python file with <code>def handler(event, context): ...</code>.</p>
+<p>When you rebuild after editing only the handler, Docker reuses the cached base and dependency layers and rebuilds just the last layer, which is fast.</p>
+<p>That layering behavior is the point: the same Docker skills from Phase 0 now ship serverless code.</p>
+<h2>Uses</h2>
+<ul>
+<li>Shipping functions with large or native dependencies that exceed the zip size limit.</li>
+<li>Reusing an existing container toolchain and base image for serverless workloads.</li>
+<li>Keeping build times low by putting stable dependencies in early layers.</li>
+<li>Porting a containerized service to serverless with minimal changes.</li>
+<li>Pinning the exact runtime version that your tests were written against.</li>
+</ul>
+<h2>Key info</h2>
+<ul>
+<li>Create <code>lambda/</code> with a handler file, for example <code>def handler(event, context): return {&quot;ok&quot;: True}</code>.</li>
+<li>Start the <code>Dockerfile</code> with <code>FROM public.ecr.aws/lambda/python:3.13</code>.</li>
+<li>Copy the handler and set <code>CMD [&quot;app.handler&quot;]</code> to name the entry point.</li>
+<li>Build: <code>docker build -t dojo-lambda .</code></li>
+<li>Inspect layers: <code>docker image history dojo-lambda</code></li>
+<li>Watch only the last layers rebuild when you edit the handler and nothing else.</li>
+<li>The base image is large, so keep it as the first line to preserve the cache.</li>
+</ul>
+<h2>Pitfalls</h2>
+<ul>
+<li>Putting <code>COPY . .</code> before installing dependencies, which invalidates the cache on every code edit.</li>
+<li>Forgetting that the base image already provides the runtime, so installing your own breaks the contract.</li>
+<li>Using the wrong handler name in <code>CMD</code>. It must match <code>file.function</code>.</li>
+</ul>
+<h2>Done check</h2>
+<p>paste <code>docker images | grep dojo-lambda</code> + <code>docker image history dojo-lambda --format &#x27;{{.CreatedBy}}&#x27;</code> (first 5 lines).</p>
+<h2>Links</h2>
+<ul>
+<li>Lambda container images: https://docs.aws.amazon.com/lambda/latest/dg/images-create.html</li>
+<li>AWS base image gallery: https://gallery.ecr.aws/lambda/python</li>
+<li>Lambda handler concepts: https://docs.aws.amazon.com/lambda/latest/dg/python-handler.html</li>
+</ul>
+</article>
+<div class="nav"><span><a class="nav-btn" href="Q2.5.html">← Q2.5 👹 Boss: full rebuild loop</a></span><span><a class="nav-btn" href="Q3.2.html">Q3.2 Push to the local ECR →</a></span></div>
+<footer>Source: <code>quests/Q3.1.md</code> · re-run <code>python3 shared/render_dashboard.py</code> after editing.</footer>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Q3.3 Create + invoke — Cloud Dojo</title>
+<style>:root{--bg:#0d1117;--card:#161b22;--line:#30363d;--txt:#e6edf3;
+--mut:#8b949e;--grn:#3fb950;--amb:#d29922;--blu:#58a6ff;--pur:#bc8cff}
+*{box-sizing:border-box}body{background:var(--bg);color:var(--txt);
+font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;margin:0;
+padding:24px;max-width:860px;margin-inline:auto;line-height:1.6}
+.crumb{margin-bottom:14px;font-size:.9rem}.crumb a{color:var(--blu);text-decoration:none}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:18px}
+.hero h1{font-size:1.4rem;margin:0 0 6px}.meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+color:var(--mut);font-size:.9rem}
+.pill{padding:2px 10px;border-radius:999px;font-size:.8rem;border:1px solid var(--line)}
+.pill.done{color:var(--grn);border-color:var(--grn)}.pill.active{color:var(--amb);border-color:var(--amb)}
+.pill.locked{color:var(--mut)}
+article{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+article h2{font-size:1.05rem;margin:20px 0 8px;color:var(--blu)}article h2:first-child{margin-top:0}
+article p{margin:8px 0}article ul{margin:8px 0;padding-left:22px}article li{margin:4px 0}
+article a{color:var(--blu)}code{background:#21262d;padding:2px 6px;border-radius:6px;
+font-family:ui-monospace,monospace;font-size:.88em}
+pre{background:#010409;border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
+pre code{background:none;padding:0}
+.nav{display:flex;justify-content:space-between;gap:12px;margin:18px 0;flex-wrap:wrap}
+.nav-btn{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 14px;
+color:var(--txt);text-decoration:none;font-size:.9rem}.nav-btn:hover{border-color:var(--blu)}
+footer{color:var(--mut);font-size:.85rem;margin-top:16px}footer code{background:#21262d;
+padding:2px 6px;border-radius:6px}</style>
+</head>
+<body>
+<div class="crumb"><a href="../dashboard.html">← Cloud Dojo dashboard</a> · Phase 3 — Lambda Container Images</div>
+<div class="hero">
+<h1>Q3.3 — Create + invoke</h1>
+<div class="meta"><span class="pill locked">🔒 locked</span><span>40 XP</span><span>Phase 3 — Lambda Container Images</span></div>
+</div>
+<article>
+<h1>Q3.3 — Create + invoke (40 XP)</h1>
+<p><strong>Phase:</strong> Phase 3 — Lambda Container Images</p>
+<h2>Concept</h2>
+<p>Now the image becomes a function.</p>
+<p><code>create-function</code> with <code>--package-type Image</code> and a <code>--code ImageUri=&lt;uri&gt;</code> registers the pushed image as a Lambda function.</p>
+<p>You do not pass <code>--handler</code> or <code>--runtime</code> for image functions, because the image already declares both through its <code>CMD</code> and base image.</p>
+<p>Once created, <code>invoke</code> calls it synchronously with a test payload and writes the response to a file, so you can read exactly what the code returned.</p>
+<p>This is the full loop made real: build, push, register, invoke.</p>
+<p>The same commands work against real AWS, where the execution role you attach decides which APIs the function may call.</p>
+<h2>Uses</h2>
+<ul>
+<li>Testing a function with a controlled payload before wiring any trigger.</li>
+<li>Verifying that an image-based function starts and runs correctly.</li>
+<li>Running one-off serverless jobs on demand.</li>
+<li>Debugging handler logic in isolation from its event source.</li>
+<li>Re-invoking with different payloads to check edge cases quickly.</li>
+</ul>
+<h2>Key info</h2>
+<ul>
+<li>Create: <code>aws --endpoint-url http://localhost:4566 lambda create-function --function-name dojo-lambda --package-type Image --code ImageUri=&lt;your pushed URI&gt; --role &lt;role-arn&gt;</code></li>
+<li>Invoke: <code>aws --endpoint-url http://localhost:4566 lambda invoke --function-name dojo-lambda --payload &#x27;{&quot;key&quot;:&quot;value&quot;}&#x27; out.json</code></li>
+<li>Read the result: <code>cat out.json</code></li>
+<li>Image functions need no <code>--handler</code> or <code>--runtime</code>; the image supplies them.</li>
+<li>The <code>--role</code> is the execution role. On the emulator it is decorative; on real AWS it gates every API call.</li>
+<li>Check status while debugging: <code>aws --endpoint-url http://localhost:4566 lambda get-function --function-name dojo-lambda</code></li>
+<li>Logs from an invoke land in the function&#x27;s CloudWatch log group, which is how you see <code>print</code> output.</li>
+<li>For larger events, pass a file instead of inline JSON: <code>--payload file://event.json</code>.</li>
+</ul>
+<h2>Pitfalls</h2>
+<ul>
+<li>Passing <code>--handler</code> or <code>--runtime</code> for an image function, which the API rejects.</li>
+<li>Pointing <code>--code ImageUri</code> at an untagged or wrong-architecture image, so the function fails to start.</li>
+<li>Ignoring <code>out.json</code> and assuming success, since <code>invoke</code> returns status separately from the function&#x27;s payload.</li>
+</ul>
+<h2>Done check</h2>
+<p>paste the invoke response JSON.</p>
+<h2>Links</h2>
+<ul>
+<li><code>create-function</code> reference: https://docs.aws.amazon.com/cli/latest/reference/lambda/create-function.html</li>
+<li><code>invoke</code> reference: https://docs.aws.amazon.com/cli/latest/reference/lambda/invoke.html</li>
+<li>Lambda execution role: https://docs.aws.amazon.com/lambda/latest/dg/lambda-intro-execution-role.html</li>
+</ul>
+</article>
+<div class="nav"><span><a class="nav-btn" href="Q3.2.html">← Q3.2 Push to the local ECR</a></span><span><a class="nav-btn" href="Q3.4.html">Q3.4 Wire an event trigger →</a></span></div>
+<footer>Source: <code>quests/Q3.3.md</code> · re-run <code>python3 shared/render_dashboard.py</code> after editing.</footer>
+</body>
+</html>
