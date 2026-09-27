@@ -1,0 +1,44 @@
+{
+  "name": "Cloud Dojo (Docker + AWS + Terraform)",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-24.04",
+
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:4": {
+      "version": "latest",
+      "dockerDashComposeVersion": "v2"
+    },
+    "ghcr.io/devcontainers/features/aws-cli:1": {},
+    "ghcr.io/devcontainers/features/terraform:1": {
+      "tflint": "latest"
+    },
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.12"
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+
+  "forwardPorts": [4566, 8080, 8081],
+  "portsAttributes": {
+    "4566": { "label": "AWS emulator (MiniStack/LocalStack)", "onAutoForward": "silent" },
+    "8080": { "label": "Compose app", "onAutoForward": "notify" },
+    "8081": { "label": "Dockerfile site (Q0.4)", "onAutoForward": "silent" }
+  },
+
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
+
+  "hostRequirements": { "cpus": 2, "memory": "8gb", "storage": "32gb" },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-azuretools.vscode-containers",
+        "AmazonWebServices.aws-toolkit-vscode",
+        "HashiCorp.terraform",
+        "ms-python.python"
+      ]
+    }
+  },
+  "remoteEnv": {
+    "LOCALSTACK_AUTH_TOKEN": "${localEnv:LOCALSTACK_AUTH_TOKEN}"
+  }
+}
