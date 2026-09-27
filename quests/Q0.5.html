@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Q0.5 Layers and cache — Cloud Dojo</title>
+<style>:root{--bg:#0d1117;--card:#161b22;--line:#30363d;--txt:#e6edf3;
+--mut:#8b949e;--grn:#3fb950;--amb:#d29922;--blu:#58a6ff;--pur:#bc8cff}
+*{box-sizing:border-box}body{background:var(--bg);color:var(--txt);
+font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;margin:0;
+padding:24px;max-width:860px;margin-inline:auto;line-height:1.6}
+.crumb{margin-bottom:14px;font-size:.9rem}.crumb a{color:var(--blu);text-decoration:none}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:18px}
+.hero h1{font-size:1.4rem;margin:0 0 6px}.meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+color:var(--mut);font-size:.9rem}
+.pill{padding:2px 10px;border-radius:999px;font-size:.8rem;border:1px solid var(--line)}
+.pill.done{color:var(--grn);border-color:var(--grn)}.pill.active{color:var(--amb);border-color:var(--amb)}
+.pill.locked{color:var(--mut)}
+article{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+article h2{font-size:1.05rem;margin:20px 0 8px;color:var(--blu)}article h2:first-child{margin-top:0}
+article p{margin:8px 0}article ul{margin:8px 0;padding-left:22px}article li{margin:4px 0}
+article a{color:var(--blu)}code{background:#21262d;padding:2px 6px;border-radius:6px;
+font-family:ui-monospace,monospace;font-size:.88em}
+pre{background:#010409;border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
+pre code{background:none;padding:0}
+.nav{display:flex;justify-content:space-between;gap:12px;margin:18px 0;flex-wrap:wrap}
+.nav-btn{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 14px;
+color:var(--txt);text-decoration:none;font-size:.9rem}.nav-btn:hover{border-color:var(--blu)}
+footer{color:var(--mut);font-size:.85rem;margin-top:16px}footer code{background:#21262d;
+padding:2px 6px;border-radius:6px}</style>
+</head>
+<body>
+<div class="crumb"><a href="../dashboard.html">← Cloud Dojo dashboard</a> · Phase 0 — Docker Foundations</div>
+<div class="hero">
+<h1>Q0.5 — Layers and cache</h1>
+<div class="meta"><span class="pill locked">🔒 locked</span><span>20 XP</span><span>Phase 0 — Docker Foundations</span></div>
+</div>
+<article>
+<h1>Q0.5 — Layers and cache (20 XP)</h1>
+<p><strong>Phase:</strong> Phase 0 — Docker Foundations</p>
+<h2>Concept</h2>
+<p>Every Dockerfile instruction creates a layer, identified by a content hash. When you rebuild, Docker reuses any layer whose instruction and inputs are unchanged, and that reuse is the build cache.</p>
+<p>Ordering instructions so slow-changing ones come first makes rebuilds fast: a one-line code edit should only rebuild the last layer. <code>docker image history</code> shows each layer and the command that made it, so you can literally watch the cache work. This quest is about noticing that order changes your feedback loop.</p>
+<h2>Uses</h2>
+<ul>
+<li>Cut CI build time by reusing dependency layers across commits.</li>
+<li>Keep the inner dev loop fast when only app code changes.</li>
+<li>Debug slow builds by spotting a huge or frequently invalidated layer.</li>
+<li>Understand why image pulls are small when only the top layer changed.</li>
+<li>Design Dockerfiles that cooperate with the cache instead of fighting it.</li>
+</ul>
+<h2>Key info</h2>
+<ul>
+<li>First rebuild with no changes: every layer shows <code>CACHED</code> and finishes in a moment.</li>
+<li>Edit <code>index.html</code> and rebuild: only the <code>COPY</code> layer and anything after it rebuilds.</li>
+<li>Inspect layers: <code>docker image history dojo-site</code>.</li>
+<li>Force a full rebuild when needed: <code>docker build --no-cache -t dojo-site .</code>.</li>
+<li>Cache is content-based, not time-based; Docker compares hashes, not timestamps.</li>
+<li>Slow-changing instructions (<code>FROM</code>, dependency installs) belong at the top.</li>
+<li>Fast-changing instructions (<code>COPY</code> app code) belong at the bottom.</li>
+<li>Big layers early make every later change feel slow.</li>
+<li><code>docker build</code> prints <code>CACHED</code> per step, the quickest way to read the cache.</li>
+<li>Unchanged Dockerfile plus unchanged context means a near-instant rebuild.</li>
+<li>Only changed top layers transfer when you push and pull between machines.</li>
+</ul>
+<h2>Pitfalls</h2>
+<ul>
+<li>Editing a file early in the context invalidates every layer after it.</li>
+<li><code>COPY . .</code> before a dependency install means every code change re-installs dependencies.</li>
+<li>Assuming the cache is stale: it only invalidates when the content actually changes, so a changed mirror won&#x27;t be noticed unless the instruction changes.</li>
+</ul>
+<h2>Done check</h2>
+<p>paste the two build timings + which layer rebuilt.</p>
+<h2>Links</h2>
+<ul>
+<li>Build cache — https://docs.docker.com/build/cache/</li>
+<li>docker image history — https://docs.docker.com/reference/cli/docker/image/history/</li>
+<li>Dockerfile best practices — https://docs.docker.com/develop/develop-images/dockerfile_best-practices/</li>
+</ul>
+</article>
+<div class="nav"><span><a class="nav-btn" href="Q0.4.html">← Q0.4 Your first Dockerfile</a></span><span><a class="nav-btn" href="Q0.6.html">Q0.6 👹 Boss: custom port + name →</a></span></div>
+<footer>Source: <code>quests/Q0.5.md</code> · re-run <code>python3 shared/render_dashboard.py</code> after editing.</footer>
+</body>
+</html>

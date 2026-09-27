@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Q0.1 Hello, Docker — Cloud Dojo</title>
+<style>:root{--bg:#0d1117;--card:#161b22;--line:#30363d;--txt:#e6edf3;
+--mut:#8b949e;--grn:#3fb950;--amb:#d29922;--blu:#58a6ff;--pur:#bc8cff}
+*{box-sizing:border-box}body{background:var(--bg);color:var(--txt);
+font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;margin:0;
+padding:24px;max-width:860px;margin-inline:auto;line-height:1.6}
+.crumb{margin-bottom:14px;font-size:.9rem}.crumb a{color:var(--blu);text-decoration:none}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:18px}
+.hero h1{font-size:1.4rem;margin:0 0 6px}.meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+color:var(--mut);font-size:.9rem}
+.pill{padding:2px 10px;border-radius:999px;font-size:.8rem;border:1px solid var(--line)}
+.pill.done{color:var(--grn);border-color:var(--grn)}.pill.active{color:var(--amb);border-color:var(--amb)}
+.pill.locked{color:var(--mut)}
+article{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+article h2{font-size:1.05rem;margin:20px 0 8px;color:var(--blu)}article h2:first-child{margin-top:0}
+article p{margin:8px 0}article ul{margin:8px 0;padding-left:22px}article li{margin:4px 0}
+article a{color:var(--blu)}code{background:#21262d;padding:2px 6px;border-radius:6px;
+font-family:ui-monospace,monospace;font-size:.88em}
+pre{background:#010409;border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
+pre code{background:none;padding:0}
+.nav{display:flex;justify-content:space-between;gap:12px;margin:18px 0;flex-wrap:wrap}
+.nav-btn{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 14px;
+color:var(--txt);text-decoration:none;font-size:.9rem}.nav-btn:hover{border-color:var(--blu)}
+footer{color:var(--mut);font-size:.85rem;margin-top:16px}footer code{background:#21262d;
+padding:2px 6px;border-radius:6px}</style>
+</head>
+<body>
+<div class="crumb"><a href="../dashboard.html">← Cloud Dojo dashboard</a> · Phase 0 — Docker Foundations</div>
+<div class="hero">
+<h1>Q0.1 — Hello, Docker</h1>
+<div class="meta"><span class="pill active">▶️ in progress</span><span>10 XP</span><span>Phase 0 — Docker Foundations</span></div>
+</div>
+<article>
+<h1>Q0.1 — Hello, Docker (10 XP)</h1>
+<p><strong>Phase:</strong> Phase 0 — Docker Foundations</p>
+<h2>Concept</h2>
+<p>Docker packages an application and everything it needs into one image, then runs that image as an isolated container. The <code>hello-world</code> image is the smallest possible proof that the whole chain works: the CLI, the daemon, and registry access.</p>
+<p>Run it and Docker pulls the image if it&#x27;s missing, starts a container, lets it print a message, and the container exits. It exists so you can separate &quot;Docker is broken&quot; from &quot;my app is broken&quot; before you write a single Dockerfile. If this one command succeeds, your install is healthy and you can move on with confidence.</p>
+<h2>Uses</h2>
+<ul>
+<li>Verify a fresh Docker install on a new laptop, server, or CI runner.</li>
+<li>Confirm the Docker daemon is running after a reboot or an upgrade.</li>
+<li>Test connectivity to Docker Hub, since the image is pulled from a registry.</li>
+<li>Check whether <code>sudo</code> or group permissions are needed before real work.</li>
+<li>Give a five-second health check in docs or onboarding scripts.</li>
+</ul>
+<h2>Key info</h2>
+<ul>
+<li><code>docker run hello-world</code> pulls (if missing), creates, starts, prints, and stops.</li>
+<li><code>docker version</code> shows the client and the server (daemon) versions separately.</li>
+<li><code>docker ps -a</code> lists the now-exited container; it is tiny and safe to leave.</li>
+<li>Remove it cleanly with <code>docker rm &lt;id&gt;</code>.</li>
+<li>On Linux, add your user to the docker group: <code>sudo usermod -aG docker $USER</code>, then log out and back in.</li>
+<li>Once that group step is done, you no longer need <code>sudo</code> for Docker commands.</li>
+<li>The command exits with code 0; a non-zero code means the smoke test itself failed.</li>
+<li>This image does nothing else on purpose; it exists only to prove the plumbing.</li>
+<li><code>docker run &lt;image&gt;</code> is create plus start plus attach plus print, in one command.</li>
+<li>Check the exit code with <code>echo $?</code> right after; 0 means success.</li>
+<li><code>docker rmi hello-world</code> removes the local image once you&#x27;re done with it.</li>
+</ul>
+<h2>Pitfalls</h2>
+<ul>
+<li>&quot;Cannot connect to the Docker daemon&quot; means the daemon isn&#x27;t running; start Docker Desktop or <code>sudo systemctl start docker</code>.</li>
+<li>&quot;permission denied&quot; on <code>/var/run/docker.sock</code> means you aren&#x27;t in the docker group yet.</li>
+<li>Expecting the container to stay alive: it stops the moment its main process exits.</li>
+</ul>
+<h2>Done check</h2>
+<p>paste the <code>Hello from Docker!</code> output.</p>
+<h2>Links</h2>
+<ul>
+<li>Docker get started — https://docs.docker.com/get-started/</li>
+<li>What is a container — https://docs.docker.com/get-started/docker-concepts/the-basics/what-is-a-container/</li>
+<li>docker run reference — https://docs.docker.com/reference/cli/docker/container/run/</li>
+</ul>
+</article>
+<div class="nav"><span></span><span><a class="nav-btn" href="Q0.2.html">Q0.2 Run the emulator →</a></span></div>
+<footer>Source: <code>quests/Q0.1.md</code> · re-run <code>python3 shared/render_dashboard.py</code> after editing.</footer>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Q0.2 Run the emulator — Cloud Dojo</title>
+<style>:root{--bg:#0d1117;--card:#161b22;--line:#30363d;--txt:#e6edf3;
+--mut:#8b949e;--grn:#3fb950;--amb:#d29922;--blu:#58a6ff;--pur:#bc8cff}
+*{box-sizing:border-box}body{background:var(--bg);color:var(--txt);
+font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;margin:0;
+padding:24px;max-width:860px;margin-inline:auto;line-height:1.6}
+.crumb{margin-bottom:14px;font-size:.9rem}.crumb a{color:var(--blu);text-decoration:none}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:18px}
+.hero h1{font-size:1.4rem;margin:0 0 6px}.meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+color:var(--mut);font-size:.9rem}
+.pill{padding:2px 10px;border-radius:999px;font-size:.8rem;border:1px solid var(--line)}
+.pill.done{color:var(--grn);border-color:var(--grn)}.pill.active{color:var(--amb);border-color:var(--amb)}
+.pill.locked{color:var(--mut)}
+article{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+article h2{font-size:1.05rem;margin:20px 0 8px;color:var(--blu)}article h2:first-child{margin-top:0}
+article p{margin:8px 0}article ul{margin:8px 0;padding-left:22px}article li{margin:4px 0}
+article a{color:var(--blu)}code{background:#21262d;padding:2px 6px;border-radius:6px;
+font-family:ui-monospace,monospace;font-size:.88em}
+pre{background:#010409;border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
+pre code{background:none;padding:0}
+.nav{display:flex;justify-content:space-between;gap:12px;margin:18px 0;flex-wrap:wrap}
+.nav-btn{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 14px;
+color:var(--txt);text-decoration:none;font-size:.9rem}.nav-btn:hover{border-color:var(--blu)}
+footer{color:var(--mut);font-size:.85rem;margin-top:16px}footer code{background:#21262d;
+padding:2px 6px;border-radius:6px}</style>
+</head>
+<body>
+<div class="crumb"><a href="../dashboard.html">← Cloud Dojo dashboard</a> · Phase 0 — Docker Foundations</div>
+<div class="hero">
+<h1>Q0.2 — Run the emulator</h1>
+<div class="meta"><span class="pill locked">🔒 locked</span><span>15 XP</span><span>Phase 0 — Docker Foundations</span></div>
+</div>
+<article>
+<h1>Q0.2 — Run the emulator (15 XP)</h1>
+<p><strong>Phase:</strong> Phase 0 — Docker Foundations</p>
+<h2>Concept</h2>
+<p>An emulator is a local service that speaks the same HTTP APIs as a cloud provider. MiniStack emulates many AWS services on a single port (<code>4566</code>), so you can create buckets and queues with no AWS account and no bill.</p>
+<p>Running it in a container keeps your machine clean and makes the whole thing disposable. This quest proves you can start a long-running service in the background and reach it from your host. Detached mode plus a stable name plus a port mapping is the shape of every service container you&#x27;ll run for the rest of the course.</p>
+<h2>Uses</h2>
+<ul>
+<li>Learn AWS APIs offline with zero cost and zero account setup.</li>
+<li>Run integration tests in CI without touching a real cloud.</li>
+<li>Prototype a data pipeline before committing to real infrastructure.</li>
+<li>Share a repro environment that behaves the same on every laptop.</li>
+<li>Tear down and recreate the whole stack in seconds.</li>
+</ul>
+<h2>Key info</h2>
+<ul>
+<li>Start it: <code>docker run -d --name dojo-emu -p 4566:4566 ministackorg/ministack</code>.</li>
+<li><code>-d</code> runs detached in the background; <code>-p host:container</code> publishes the port.</li>
+<li><code>--name dojo-emu</code> gives the container a stable handle you&#x27;ll reuse everywhere.</li>
+<li>Check it&#x27;s up: <code>docker ps</code>.</li>
+<li>Health check: <code>curl -s http://localhost:4566/_ministack/health</code>.</li>
+<li><code>curl</code> returns JSON; a connection error means the container isn&#x27;t running or the port isn&#x27;t mapped.</li>
+<li>Data lives in the container&#x27;s writable layer by default and dies with it; a volume fixes that in Q1.4.</li>
+<li>The emulator ignores credentials, but the CLI still wants them set; use fake <code>test</code>/<code>test</code>.</li>
+<li><code>docker logs dojo-emu</code> shows the startup output if something looks wrong.</li>
+<li><code>docker stop dojo-emu</code> and <code>docker start dojo-emu</code> cycle it without losing the name.</li>
+<li><code>http://localhost:4566</code> is the endpoint every Phase 1 command builds on.</li>
+</ul>
+<h2>Pitfalls</h2>
+<ul>
+<li>Forgetting <code>-d</code> makes the terminal block on the container&#x27;s foreground output; use <code>Ctrl+C</code> and re-run with <code>-d</code>.</li>
+<li>Port <code>4566</code> already in use means another process owns it; find it with <code>docker ps</code> or map a different host port like <code>-p 4570:4566</code>.</li>
+<li>A name collision on <code>dojo-emu</code> means a container already exists; remove it with <code>docker rm -f dojo-emu</code> or pick a new name.</li>
+</ul>
+<h2>Done check</h2>
+<p>paste the health JSON.</p>
+<h2>Links</h2>
+<ul>
+<li>docker run reference — https://docs.docker.com/reference/cli/docker/container/run/</li>
+<li>Publishing ports — https://docs.docker.com/get-started/docker-concepts/running-containers/publishing-ports/</li>
+<li>LocalStack getting started — https://docs.localstack.cloud/aws/getting-started/installation/</li>
+</ul>
+</article>
+<div class="nav"><span><a class="nav-btn" href="Q0.1.html">← Q0.1 Hello, Docker</a></span><span><a class="nav-btn" href="Q0.3.html">Q0.3 Lifecycle: ports, logs, stop/rm →</a></span></div>
+<footer>Source: <code>quests/Q0.2.md</code> · re-run <code>python3 shared/render_dashboard.py</code> after editing.</footer>
+</body>
+</html>
