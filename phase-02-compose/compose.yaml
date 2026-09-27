@@ -1,0 +1,30 @@
+services:
+  emulator:
+    image: ${EMULATOR_IMAGE:-ministackorg/ministack}
+    container_name: dojo-emulator
+    ports:
+      - "4566:4566"
+    volumes:
+      - dojo-data:/var/lib/localstack
+    # LocalStack variant (uncomment + set token to swap):
+    # image: localstack/localstack
+    # environment:
+    #   - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN:?}
+    #   - /var/run/docker.sock:/var/run/docker.sock
+
+  app:
+    build: ./app
+    container_name: dojo-app
+    depends_on:
+      - emulator
+    environment:
+      # Service-name DNS, NOT localhost — this is the entire lesson of Phase 2.
+      - AWS_ENDPOINT_URL=http://emulator:4566
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_DEFAULT_REGION=us-east-1
+    ports:
+      - "8080:8080"
+
+volumes:
+  dojo-data:
