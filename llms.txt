@@ -1,0 +1,16 @@
+# Cloud Dojo
+
+> Gamified Docker + AWS course: 8 phases, 57 hands-on quests, 1600 XP, live dashboard.
+> Run AWS locally with emulators (MiniStack, LocalStack, Moto). Free, no AWS account needed for core phases.
+
+- Course map + XP: [ROADMAP.md](ROADMAP.md)
+- Rules, levels, badges: [GAME-RULES.md](GAME-RULES.md)
+- Live dashboard: https://nabil0x.github.io/cloud-dojo/
+- Progress tracker CLI: [shared/progress.py](shared/progress.py)
+- Study guides: `phase-*/STUDY.md` (00 docker, 01 S3/SQS/DynamoDB, 02 compose, 03 lambda images, 04 EC2/VPC/RDS, 05 Bedrock/SageMaker, 06 Terraform, 07 CI/CD+ECS, 08 RAG capstone)
+- Self-check quizzes: `assessments/*.md` (answers hidden in `<details>` blocks)
+- Quest concept pages: `quests/<ID>.md` (rendered HTML linked from dashboard)
+- Cheatsheets: [Docker](cheatsheets/docker.md) · [AWS CLI](cheatsheets/aws-cli.md) · [Terraform](cheatsheets/terraform.md) · [GitHub Actions](cheatsheets/github-actions.md)
+- Glossary: [GLOSSARY.md](GLOSSARY.md) · Troubleshooting: [TROUBLESHOOTING.md](TROUBLESHOOTING.md)
+- Real-AWS track (IAM/billing) + Moto testing module: `track-iam-sandbox/`, `module-moto-testing/`
+- Contributing: [CONTRIBUTING.md](CONTRIBUTING.md) · License: MIT

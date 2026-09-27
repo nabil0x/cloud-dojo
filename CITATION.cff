@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+title: "Cloud Dojo: Learn Docker and AWS Hands-On"
+message: "If you use this course in teaching or research, please cite it as below."
+type: software
+authors:
+  - given-names: Nabil
+    family-names: Khan
+    alias: nabil0x
+license: MIT
+version: 1.0.0
+date-released: 2026-09-27
+repository-code: "https://github.com/nabil0x/cloud-dojo"
+url: "https://nabil0x.github.io/cloud-dojo/"
+keywords:
+  - docker
+  - aws
+  - devops
+  - terraform
+  - cloud-computing-education
