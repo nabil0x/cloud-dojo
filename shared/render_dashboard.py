@@ -152,7 +152,7 @@ QUEST_TEMPLATE = Template("""<!DOCTYPE html>
 $body
 </article>
 <div class="nav"><span>$prev</span><span>$next</span></div>
-<footer>Source: <code>quests/$quest_id.md</code> · re-run <code>python3 shared/render_dashboard.py</code> after editing.</footer>
+<footer>Source: <code>quests/$quest_id.md</code> (sibling of <code>html/</code>) · re-run <code>python3 shared/render_dashboard.py</code> after editing.</footer>
 <script>
 document.querySelectorAll(".copybtn").forEach(function(b){
   b.addEventListener("click", function(){
@@ -177,6 +177,8 @@ document.querySelectorAll(".copybtn").forEach(function(b){
 
 def render_quest_pages(data):
     quests_dir = ROOT / "quests"
+    html_dir = quests_dir / "html"
+    html_dir.mkdir(exist_ok=True)
     flat = [(ph, q) for ph in data["phases"] for q in ph["quests"]]
     count = 0
     for i, (ph, q) in enumerate(flat):
@@ -192,7 +194,7 @@ def render_quest_pages(data):
             next_ = f'<a class="nav-btn" href="{esc(n["id"])}.html">{esc(n["id"])} {esc(n["title"])} →</a>'
         icon, cls = STATUS_STYLE.get(q["status"], ("🔒", "locked"))
         label = {"done": "done", "in_progress": "in progress"}.get(q["status"], "locked")
-        (quests_dir / f'{q["id"]}.html').write_text(
+        (html_dir / f'{q["id"]}.html').write_text(
             QUEST_TEMPLATE.substitute(
                 title=esc(f'{q["id"]} {q["title"]}'),
                 css=QUEST_CSS,
@@ -240,7 +242,7 @@ def main():
             quests.append(
                 f'<li class="quest {q_cls}"><span class="q-icon">{q_icon}</span>'
                 f'<span class="q-id">{esc(q["id"])}</span>'
-                f'<a class="q-title q-link" href="quests/{esc(q["id"])}.html">{esc(q["title"])}</a>'
+                f'<a class="q-title q-link" href="quests/html/{esc(q["id"])}.html">{esc(q["title"])}</a>'
                 f'<span class="q-xp">{q["xp"]} XP</span></li>'
             )
         done_xp = sum(q["xp"] for q in ph["quests"] if q["status"] == "done")
