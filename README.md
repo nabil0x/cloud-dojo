@@ -4,14 +4,22 @@
 [![License: MIT](https://img.shields.io/github/license/nabil0x/cloud-dojo)](LICENSE)
 [![1600 XP](https://img.shields.io/badge/XP-1600-blueviolet)](ROADMAP.md)
 [![57 quests](https://img.shields.io/badge/quests-57-blue)](ROADMAP.md)
+[![Pages](https://github.com/nabil0x/cloud-dojo/actions/workflows/pages.yml/badge.svg)](https://nabil0x.github.io/cloud-dojo/)
+[![Live demo](https://img.shields.io/badge/demo-live-brightgreen)](https://nabil0x.github.io/cloud-dojo/)
 
 **Learn Docker from scratch and AWS basics by running AWS locally — free, no AWS account needed.** A gamified, quest-based DevOps tutorial: 8 phases + a real-AWS track covering S3, EC2, Lambda, DynamoDB, SQS, VPC, RDS, Terraform, CI/CD with GitHub Actions and ECS, plus Bedrock and SageMaker for AI engineers — practiced hands-on with local AWS emulators (MiniStack, LocalStack, Moto).
+
+🌐 **Live demo:** [nabil0x.github.io/cloud-dojo](https://nabil0x.github.io/cloud-dojo/) — the dashboard and all 57 quest pages, no install needed.
 
 <img src="docs/images/dashboard.png" width="700" alt="Cloud Dojo journey dashboard">
 
 *Track 1600 XP across 8 phases on the dashboard — every quest title opens a concept page like this:*
 
 <img src="docs/images/quest-page.png" width="700" alt="Quest concept page">
+
+*The full journey in 4 seconds:*
+
+<img src="docs/images/dashboard-tour.gif" width="700" alt="Dashboard tour">
 
 ## Who is this for
 - **Beginners** learning Docker from scratch and AWS fundamentals without surprise bills
