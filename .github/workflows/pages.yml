@@ -1,0 +1,38 @@
+# Deploys the dojo dashboard + quest pages to GitHub Pages.
+# NOTE (learners): this workflow ships the course SITE. Writing your own
+# pipeline from scratch is still Q7.2/Q7.3 — see phase-07-cicd-ecs/.
+
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Upload site artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+      - name: Deploy to Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
