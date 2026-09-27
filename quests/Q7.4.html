@@ -23,6 +23,10 @@ article a{color:var(--blu)}code{background:#21262d;padding:2px 6px;border-radius
 font-family:ui-monospace,monospace;font-size:.88em}
 pre{background:#010409;border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
 pre code{background:none;padding:0}
+.codewrap{position:relative}
+.copybtn{position:absolute;top:8px;right:8px;background:#21262d;color:var(--mut);
+border:1px solid var(--line);border-radius:6px;padding:2px 8px;font-size:.75rem;cursor:pointer}
+.copybtn:hover{color:var(--txt);border-color:var(--blu)}
 .nav{display:flex;justify-content:space-between;gap:12px;margin:18px 0;flex-wrap:wrap}
 .nav-btn{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 14px;
 color:var(--txt);text-decoration:none;font-size:.9rem}.nav-btn:hover{border-color:var(--blu)}
@@ -54,14 +58,14 @@ padding:2px 6px;border-radius:6px}</style>
 <ul>
 <li>Stand up the service:</li>
 </ul>
-<pre><code>
+<div class="codewrap"><button class="copybtn" type="button">copy</button><pre><code>
 aws ecs create-cluster --cluster-name dojo
 aws ecs register-task-definition --cli-input-json file://taskdef.json
 aws ecs create-service --cluster dojo --service-name dojo-svc \
   --task-definition dojo --desired-count 1 --launch-type FARGATE
 aws ecs describe-services --cluster dojo --services dojo-svc \
   --query &#x27;services[0].{running:runningCount,status:status}&#x27;
-</code></pre>
+</code></pre></div>
 <ul>
 <li><code>taskdef.json</code> carries the image, <code>cpu: &quot;256&quot;</code>, <code>memory: &quot;512&quot;</code>, the execution role, and a <code>logConfiguration</code> using the <code>awslogs</code> driver.</li>
 <li>The service&#x27;s task needs a security group that allows inbound traffic on your app port.</li>
@@ -85,5 +89,22 @@ aws ecs describe-services --cluster dojo --services dojo-svc \
 </article>
 <div class="nav"><span><a class="nav-btn" href="Q7.3.html">← Q7.3 Pipeline pushes to ECR by SHA</a></span><span><a class="nav-btn" href="Q7.5.html">Q7.5 👹 Boss: push-to-deploy + teardown →</a></span></div>
 <footer>Source: <code>quests/Q7.4.md</code> · re-run <code>python3 shared/render_dashboard.py</code> after editing.</footer>
+<script>
+document.querySelectorAll(".copybtn").forEach(function(b){
+  b.addEventListener("click", function(){
+    var t = b.parentElement.querySelector("pre").innerText;
+    function done(){ b.textContent = "copied"; setTimeout(function(){ b.textContent = "copy"; }, 1200); }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(t).then(done, function(){ fallback(); });
+    } else { fallback(); }
+    function fallback(){
+      var ta = document.createElement("textarea");
+      ta.value = t; document.body.appendChild(ta); ta.select();
+      try { document.execCommand("copy"); done(); } catch(e) {}
+      document.body.removeChild(ta);
+    }
+  });
+});
+</script>
 </body>
 </html>

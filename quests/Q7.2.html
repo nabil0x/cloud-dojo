@@ -23,6 +23,10 @@ article a{color:var(--blu)}code{background:#21262d;padding:2px 6px;border-radius
 font-family:ui-monospace,monospace;font-size:.88em}
 pre{background:#010409;border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
 pre code{background:none;padding:0}
+.codewrap{position:relative}
+.copybtn{position:absolute;top:8px;right:8px;background:#21262d;color:var(--mut);
+border:1px solid var(--line);border-radius:6px;padding:2px 8px;font-size:.75rem;cursor:pointer}
+.copybtn:hover{color:var(--txt);border-color:var(--blu)}
 .nav{display:flex;justify-content:space-between;gap:12px;margin:18px 0;flex-wrap:wrap}
 .nav-btn{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 14px;
 color:var(--txt);text-decoration:none;font-size:.9rem}.nav-btn:hover{border-color:var(--blu)}
@@ -54,7 +58,7 @@ padding:2px 6px;border-radius:6px}</style>
 <ul>
 <li>A minimal workflow:</li>
 </ul>
-<pre><code>
+<div class="codewrap"><button class="copybtn" type="button">copy</button><pre><code>
 name: ci
 on:
   push:
@@ -66,7 +70,7 @@ jobs:
       - uses: actions/checkout@v4
       - run: docker build -t dojo-app:ci .
       - run: docker run --rm dojo-app:ci python -m pytest -q
-</code></pre>
+</code></pre></div>
 <ul>
 <li>Triggers live under <code>on:</code>; each job runs on a fresh <code>runs-on</code> machine.</li>
 <li>Read a failed log top-down: the first real error is usually the only one that matters.</li>
@@ -89,5 +93,22 @@ jobs:
 </article>
 <div class="nav"><span><a class="nav-btn" href="Q7.1.html">← Q7.1 Prod-ready image + ECR</a></span><span><a class="nav-btn" href="Q7.3.html">Q7.3 Pipeline pushes to ECR by SHA →</a></span></div>
 <footer>Source: <code>quests/Q7.2.md</code> · re-run <code>python3 shared/render_dashboard.py</code> after editing.</footer>
+<script>
+document.querySelectorAll(".copybtn").forEach(function(b){
+  b.addEventListener("click", function(){
+    var t = b.parentElement.querySelector("pre").innerText;
+    function done(){ b.textContent = "copied"; setTimeout(function(){ b.textContent = "copy"; }, 1200); }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(t).then(done, function(){ fallback(); });
+    } else { fallback(); }
+    function fallback(){
+      var ta = document.createElement("textarea");
+      ta.value = t; document.body.appendChild(ta); ta.select();
+      try { document.execCommand("copy"); done(); } catch(e) {}
+      document.body.removeChild(ta);
+    }
+  });
+});
+</script>
 </body>
 </html>

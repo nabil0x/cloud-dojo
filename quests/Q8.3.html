@@ -23,6 +23,10 @@ article a{color:var(--blu)}code{background:#21262d;padding:2px 6px;border-radius
 font-family:ui-monospace,monospace;font-size:.88em}
 pre{background:#010409;border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
 pre code{background:none;padding:0}
+.codewrap{position:relative}
+.copybtn{position:absolute;top:8px;right:8px;background:#21262d;color:var(--mut);
+border:1px solid var(--line);border-radius:6px;padding:2px 8px;font-size:.75rem;cursor:pointer}
+.copybtn:hover{color:var(--txt);border-color:var(--blu)}
 .nav{display:flex;justify-content:space-between;gap:12px;margin:18px 0;flex-wrap:wrap}
 .nav-btn{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 14px;
 color:var(--txt);text-decoration:none;font-size:.9rem}.nav-btn:hover{border-color:var(--blu)}
@@ -55,11 +59,11 @@ padding:2px 6px;border-radius:6px}</style>
 <li>Handler shape: parse the query, validate length, retrieve from the KB, generate with the model, return <code>{ &quot;answer&quot;: ..., &quot;citations&quot;: [...] }</code>.</li>
 <li>Attach an authorizer and set limits on the route:</li>
 </ul>
-<pre><code>
+<div class="codewrap"><button class="copybtn" type="button">copy</button><pre><code>
 # JWT or IAM authorizer on every route; then:
 aws apigatewayv2 update-stage --api-id &lt;id&gt; --stage-name prod \
   --default-route-settings &#x27;{&quot;ThrottlingBurstLimit&quot;:20,&quot;ThrottlingRateLimit&quot;:10}&#x27;
-</code></pre>
+</code></pre></div>
 <ul>
 <li>CORS: use exact origins. Never combine <code>*</code> with credentials.</li>
 <li>Timeout cascade to set on purpose: gateway (roughly 29 seconds max) below the function timeout, and the function timeout below what the model call can take.</li>
@@ -83,5 +87,22 @@ aws apigatewayv2 update-stage --api-id &lt;id&gt; --stage-name prod \
 </article>
 <div class="nav"><span><a class="nav-btn" href="Q8.2.html">← Q8.2 Data + retrieval, 5-question eval</a></span><span><a class="nav-btn" href="Q8.4.html">Q8.4 Everything in Terraform via pipeline →</a></span></div>
 <footer>Source: <code>quests/Q8.3.md</code> · re-run <code>python3 shared/render_dashboard.py</code> after editing.</footer>
+<script>
+document.querySelectorAll(".copybtn").forEach(function(b){
+  b.addEventListener("click", function(){
+    var t = b.parentElement.querySelector("pre").innerText;
+    function done(){ b.textContent = "copied"; setTimeout(function(){ b.textContent = "copy"; }, 1200); }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(t).then(done, function(){ fallback(); });
+    } else { fallback(); }
+    function fallback(){
+      var ta = document.createElement("textarea");
+      ta.value = t; document.body.appendChild(ta); ta.select();
+      try { document.execCommand("copy"); done(); } catch(e) {}
+      document.body.removeChild(ta);
+    }
+  });
+});
+</script>
 </body>
 </html>

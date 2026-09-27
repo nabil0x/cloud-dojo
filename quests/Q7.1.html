@@ -23,6 +23,10 @@ article a{color:var(--blu)}code{background:#21262d;padding:2px 6px;border-radius
 font-family:ui-monospace,monospace;font-size:.88em}
 pre{background:#010409;border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
 pre code{background:none;padding:0}
+.codewrap{position:relative}
+.copybtn{position:absolute;top:8px;right:8px;background:#21262d;color:var(--mut);
+border:1px solid var(--line);border-radius:6px;padding:2px 8px;font-size:.75rem;cursor:pointer}
+.copybtn:hover{color:var(--txt);border-color:var(--blu)}
 .nav{display:flex;justify-content:space-between;gap:12px;margin:18px 0;flex-wrap:wrap}
 .nav-btn{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 14px;
 color:var(--txt);text-decoration:none;font-size:.9rem}.nav-btn:hover{border-color:var(--blu)}
@@ -54,7 +58,7 @@ padding:2px 6px;border-radius:6px}</style>
 <ul>
 <li>A hardened Dockerfile skeleton:</li>
 </ul>
-<pre><code>
+<div class="codewrap"><button class="copybtn" type="button">copy</button><pre><code>
 FROM python:3.13-slim
 WORKDIR /app
 COPY requirements.txt .
@@ -63,18 +67,18 @@ COPY . .
 USER 1001
 HEALTHCHECK CMD curl -f http://localhost:8000/health || exit 1
 CMD [&quot;python&quot;, &quot;app.py&quot;]
-</code></pre>
+</code></pre></div>
 <ul>
 <li>Create the repo and push:</li>
 </ul>
-<pre><code>
+<div class="codewrap"><button class="copybtn" type="button">copy</button><pre><code>
 aws ecr create-repository --repository-name dojo-app --region us-east-1
 aws ecr get-login-password --region us-east-1 \
   | docker login --username AWS --password-stdin &lt;acct&gt;.dkr.ecr.us-east-1.amazonaws.com
 docker build -t dojo-app:prod .
 docker tag dojo-app:prod &lt;acct&gt;.dkr.ecr.us-east-1.amazonaws.com/dojo-app:v1
 docker push &lt;acct&gt;.dkr.ecr.us-east-1.amazonaws.com/dojo-app:v1
-</code></pre>
+</code></pre></div>
 <ul>
 <li>The push prints an image digest; that digest is the immutable proof of what shipped.</li>
 </ul>
@@ -95,5 +99,22 @@ docker push &lt;acct&gt;.dkr.ecr.us-east-1.amazonaws.com/dojo-app:v1
 </article>
 <div class="nav"><span><a class="nav-btn" href="Q6.5.html">← Q6.5 👹 Boss: destroy + clean proof</a></span><span><a class="nav-btn" href="Q7.2.html">Q7.2 Pipeline: build + test, red then green →</a></span></div>
 <footer>Source: <code>quests/Q7.1.md</code> · re-run <code>python3 shared/render_dashboard.py</code> after editing.</footer>
+<script>
+document.querySelectorAll(".copybtn").forEach(function(b){
+  b.addEventListener("click", function(){
+    var t = b.parentElement.querySelector("pre").innerText;
+    function done(){ b.textContent = "copied"; setTimeout(function(){ b.textContent = "copy"; }, 1200); }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(t).then(done, function(){ fallback(); });
+    } else { fallback(); }
+    function fallback(){
+      var ta = document.createElement("textarea");
+      ta.value = t; document.body.appendChild(ta); ta.select();
+      try { document.execCommand("copy"); done(); } catch(e) {}
+      document.body.removeChild(ta);
+    }
+  });
+});
+</script>
 </body>
 </html>

@@ -67,7 +67,10 @@ def md_to_html(text):
     out, in_list, in_code = [], False, False
     for line in text.splitlines():
         if line.strip().startswith("```"):
-            out.append("</code></pre>" if in_code else "<pre><code>")
+            if in_code:
+                out.append("</code></pre></div>")
+            else:
+                out.append('<div class="codewrap"><button class="copybtn" type="button">copy</button><pre><code>')
             in_code = not in_code
             continue
         if in_code:
@@ -121,6 +124,10 @@ article a{color:var(--blu)}code{background:#21262d;padding:2px 6px;border-radius
 font-family:ui-monospace,monospace;font-size:.88em}
 pre{background:#010409;border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
 pre code{background:none;padding:0}
+.codewrap{position:relative}
+.copybtn{position:absolute;top:8px;right:8px;background:#21262d;color:var(--mut);
+border:1px solid var(--line);border-radius:6px;padding:2px 8px;font-size:.75rem;cursor:pointer}
+.copybtn:hover{color:var(--txt);border-color:var(--blu)}
 .nav{display:flex;justify-content:space-between;gap:12px;margin:18px 0;flex-wrap:wrap}
 .nav-btn{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 14px;
 color:var(--txt);text-decoration:none;font-size:.9rem}.nav-btn:hover{border-color:var(--blu)}
@@ -146,6 +153,23 @@ $body
 </article>
 <div class="nav"><span>$prev</span><span>$next</span></div>
 <footer>Source: <code>quests/$quest_id.md</code> · re-run <code>python3 shared/render_dashboard.py</code> after editing.</footer>
+<script>
+document.querySelectorAll(".copybtn").forEach(function(b){
+  b.addEventListener("click", function(){
+    var t = b.parentElement.querySelector("pre").innerText;
+    function done(){ b.textContent = "copied"; setTimeout(function(){ b.textContent = "copy"; }, 1200); }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(t).then(done, function(){ fallback(); });
+    } else { fallback(); }
+    function fallback(){
+      var ta = document.createElement("textarea");
+      ta.value = t; document.body.appendChild(ta); ta.select();
+      try { document.execCommand("copy"); done(); } catch(e) {}
+      document.body.removeChild(ta);
+    }
+  });
+});
+</script>
 </body>
 </html>
 """)
@@ -266,6 +290,8 @@ padding:7px 4px;border-top:1px solid var(--line);font-size:.95rem}}
 .q-title {{flex:1}} .q-xp {{color:var(--mut);font-size:.85rem;white-space:nowrap}}
 .q-link {{color:inherit;text-decoration:none;border-bottom:1px dotted var(--mut)}}
 .q-link:hover {{color:var(--blu);border-bottom-color:var(--blu)}}
+#qsearch{{width:100%;background:var(--card);border:1px solid var(--line);border-radius:8px;
+color:var(--txt);padding:10px 14px;font-size:.95rem;margin:4px 0 14px}}
 table {{width:100%;border-collapse:collapse;font-size:.9rem}} td,th {{padding:6px 8px;border-top:1px solid var(--line);text-align:left}}
 .muted {{color:var(--mut)}} footer {{color:var(--mut);font-size:.85rem;margin-top:20px}}
 code {{background:#21262d;padding:2px 6px;border-radius:6px}}
@@ -282,10 +308,26 @@ code {{background:#21262d;padding:2px 6px;border-radius:6px}}
 <h2>Badges</h2>
 <div class="badges">{"".join(badge_cards)}</div>
 <h2>Phases &amp; Quests</h2>
+<input id="qsearch" placeholder="Filter 57 quests (e.g. lambda, iam, volumes)..." autocomplete="off">
 {"".join(phase_cards)}
 <h2>XP Log</h2>
 <div class="hero"><table><tr><th>Date</th><th>Quest</th><th>XP</th><th>Total</th></tr>{log_rows}</table></div>
 <footer>Click any quest title to open its styled concept page. Update <code>shared/progress.json</code>, then re-run <code>python3 shared/render_dashboard.py</code> to refresh this page.</footer>
+<script>
+var box=document.getElementById("qsearch");
+box.addEventListener("input",function(){{
+var t=box.value.toLowerCase();
+document.querySelectorAll(".phase").forEach(function(ph){{
+var any=false;
+ph.querySelectorAll(".quest").forEach(function(q){{
+var hit=q.textContent.toLowerCase().indexOf(t)>=0;
+q.style.display=hit?"":"none";
+if(hit){{any=true;}}
+}});
+ph.style.display=any?"":"none";
+}});
+}});
+</script>
 </body>
 </html>
 """)

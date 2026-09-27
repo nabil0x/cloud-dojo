@@ -23,6 +23,10 @@ article a{color:var(--blu)}code{background:#21262d;padding:2px 6px;border-radius
 font-family:ui-monospace,monospace;font-size:.88em}
 pre{background:#010409;border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
 pre code{background:none;padding:0}
+.codewrap{position:relative}
+.copybtn{position:absolute;top:8px;right:8px;background:#21262d;color:var(--mut);
+border:1px solid var(--line);border-radius:6px;padding:2px 8px;font-size:.75rem;cursor:pointer}
+.copybtn:hover{color:var(--txt);border-color:var(--blu)}
 .nav{display:flex;justify-content:space-between;gap:12px;margin:18px 0;flex-wrap:wrap}
 .nav-btn{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 14px;
 color:var(--txt);text-decoration:none;font-size:.9rem}.nav-btn:hover{border-color:var(--blu)}
@@ -55,12 +59,12 @@ padding:2px 6px;border-radius:6px}</style>
 <li><code>terraform destroy</code> prints the plan, then asks for <code>yes</code> before deleting.</li>
 <li>Verify removal with the CLI:</li>
 </ul>
-<pre><code>
+<div class="codewrap"><button class="copybtn" type="button">copy</button><pre><code>
 aws --endpoint-url=http://localhost:4566 s3 ls
 aws --endpoint-url=http://localhost:4566 sqs list-queues
 aws --endpoint-url=http://localhost:4566 sns list-topics
 aws --endpoint-url=http://localhost:4566 dynamodb list-tables
-</code></pre>
+</code></pre></div>
 <ul>
 <li>For the sandbox half, point the provider at real AWS and run <code>terraform plan</code> only. Never <code>apply</code> here.</li>
 <li>A sandbox plan reports a count and the resources it would add, so you can size the cost before spending.</li>
@@ -83,5 +87,22 @@ aws --endpoint-url=http://localhost:4566 dynamodb list-tables
 </article>
 <div class="nav"><span><a class="nav-btn" href="Q6.4.html">← Q6.4 Multi-resource apply</a></span><span><a class="nav-btn" href="Q7.1.html">Q7.1 Prod-ready image + ECR →</a></span></div>
 <footer>Source: <code>quests/Q6.5.md</code> · re-run <code>python3 shared/render_dashboard.py</code> after editing.</footer>
+<script>
+document.querySelectorAll(".copybtn").forEach(function(b){
+  b.addEventListener("click", function(){
+    var t = b.parentElement.querySelector("pre").innerText;
+    function done(){ b.textContent = "copied"; setTimeout(function(){ b.textContent = "copy"; }, 1200); }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(t).then(done, function(){ fallback(); });
+    } else { fallback(); }
+    function fallback(){
+      var ta = document.createElement("textarea");
+      ta.value = t; document.body.appendChild(ta); ta.select();
+      try { document.execCommand("copy"); done(); } catch(e) {}
+      document.body.removeChild(ta);
+    }
+  });
+});
+</script>
 </body>
 </html>

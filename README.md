@@ -38,6 +38,8 @@ Docker (images, volumes, networks, Compose) → AWS core (IAM, S3, EC2, VPC, RDS
 - 🗺️ [Architecture maps](docs/architecture.md) — journey, stack, and capstone diagrams
 - 📚 [Curated resources](RESOURCES.md) — sandboxes, docs, courses, communities
 - 📋 Cheatsheets: [Docker](cheatsheets/docker.md) · [AWS CLI](cheatsheets/aws-cli.md) · [Terraform](cheatsheets/terraform.md) · [GitHub Actions](cheatsheets/github-actions.md)
+- 🚀 [Quickstart](QUICKSTART.md) — first XP in 5 minutes · Setup: [Windows/WSL2](SETUP-WINDOWS.md) · [macOS](SETUP-MAC.md)
+- 👥 [Study group runbook](STUDY-GROUP.md) — 8-week cohort format with roles
 - ✅ Self-checks: [assessments/](assessments/) — 10 questions per phase, answers hidden (no XP, honor system)
 - 🗺️ [Curriculum matrix](CURRICULUM.md) — objectives, prerequisites, time per phase
 - 🃏 [Flashcards](flashcards/REVIEW.md) — Anki deck built from the glossary

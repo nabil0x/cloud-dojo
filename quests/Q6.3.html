@@ -23,6 +23,10 @@ article a{color:var(--blu)}code{background:#21262d;padding:2px 6px;border-radius
 font-family:ui-monospace,monospace;font-size:.88em}
 pre{background:#010409;border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
 pre code{background:none;padding:0}
+.codewrap{position:relative}
+.copybtn{position:absolute;top:8px;right:8px;background:#21262d;color:var(--mut);
+border:1px solid var(--line);border-radius:6px;padding:2px 8px;font-size:.75rem;cursor:pointer}
+.copybtn:hover{color:var(--txt);border-color:var(--blu)}
 .nav{display:flex;justify-content:space-between;gap:12px;margin:18px 0;flex-wrap:wrap}
 .nav-btn{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 14px;
 color:var(--txt);text-decoration:none;font-size:.9rem}.nav-btn:hover{border-color:var(--blu)}
@@ -54,14 +58,14 @@ padding:2px 6px;border-radius:6px}</style>
 <ul>
 <li>Create a queue by hand, then import it into a matching block:</li>
 </ul>
-<pre><code>
+<div class="codewrap"><button class="copybtn" type="button">copy</button><pre><code>
 aws --endpoint-url=http://localhost:4566 sqs create-queue --queue-name dojo-queue
 
 # in main.tf: resource &quot;aws_sqs_queue&quot; &quot;dojo&quot; { name = &quot;dojo-queue&quot; }
 
 terraform import aws_sqs_queue.dojo \
   http://localhost:4566/000000000000/dojo-queue
-</code></pre>
+</code></pre></div>
 <ul>
 <li><code>terraform state list</code> shows addresses like <code>aws_s3_bucket.dojo</code> and <code>aws_sqs_queue.dojo</code>.</li>
 <li><code>terraform state show aws_s3_bucket.dojo</code> prints all attributes, including <code>id</code>.</li>
@@ -85,5 +89,22 @@ terraform import aws_sqs_queue.dojo \
 </article>
 <div class="nav"><span><a class="nav-btn" href="Q6.2.html">← Q6.2 Variables + outputs</a></span><span><a class="nav-btn" href="Q6.4.html">Q6.4 Multi-resource apply →</a></span></div>
 <footer>Source: <code>quests/Q6.3.md</code> · re-run <code>python3 shared/render_dashboard.py</code> after editing.</footer>
+<script>
+document.querySelectorAll(".copybtn").forEach(function(b){
+  b.addEventListener("click", function(){
+    var t = b.parentElement.querySelector("pre").innerText;
+    function done(){ b.textContent = "copied"; setTimeout(function(){ b.textContent = "copy"; }, 1200); }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(t).then(done, function(){ fallback(); });
+    } else { fallback(); }
+    function fallback(){
+      var ta = document.createElement("textarea");
+      ta.value = t; document.body.appendChild(ta); ta.select();
+      try { document.execCommand("copy"); done(); } catch(e) {}
+      document.body.removeChild(ta);
+    }
+  });
+});
+</script>
 </body>
 </html>
