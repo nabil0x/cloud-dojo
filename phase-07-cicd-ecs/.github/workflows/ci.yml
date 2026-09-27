@@ -1,0 +1,21 @@
+# Phase 7 starter skeleton — pipeline that builds, tests, and ships.
+# Q7.2 writes the build+test steps. Q7.3 adds ECR auth + SHA-tagged push.
+# Rule: every deploy goes through this file. Laptop deploys don't count.
+
+name: dojo-ci
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # TODO(Q7.2): build the Phase 2 app image, then run its tests.
+      # Fail loudly on purpose once (red), fix, watch green. Both runs are evidence.
+
+      # TODO(Q7.3): authenticate to AWS (prefer OIDC role over keys),
+      # log in to ECR, then build + push tagged with ${{ github.sha }}.
