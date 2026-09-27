@@ -1,0 +1,53 @@
+Image (Docker)	frozen read-only template; stacked layers + metadata.
+Container (Docker)	a running instance of an image + one thin writable layer.
+Layer (Docker)	one filesystem diff from one Dockerfile instruction; content-hashed, cached.
+Build context (Docker)	the folder you hand to `docker build` (`.`); everything `COPY` can see.
+Tag (Docker)	mutable pointer to an image (`myapp:v1`); `latest` moves, digests don't.
+Digest (Docker)	immutable `sha256:…` identity of exact image bytes.
+Volume (Docker)	storage outside any container's lifecycle; survives `rm`.
+Bind mount (Docker)	a host path mounted into a container (vs managed named volumes).
+Bridge network (Docker)	virtual LAN where containers resolve each other by name.
+Port publishing (Docker)	`-p HOST:CONTAINER`; the only way in from the host.
+Compose (Docker)	one YAML file describing a multi-container dev environment.
+Registry (Docker)	image store (Docker Hub, ECR, GHCR); `push`/`pull` move images.
+HEALTHCHECK (Docker)	orchestrator probe distinguishing dead from alive.
+Multi-stage build (Docker)	build deps in one stage, ship only runtime in the final image.
+Region / AZ (AWS core)	region = geography (`us-east-1`); AZ = isolated datacenter inside it.
+ARN (AWS core)	precise address of anything (`arn:aws:s3:::bucket/key`); policies live by ARNs.
+S3 bucket/object (AWS core)	globally-unique bucket holding key→bytes objects; no real folders.
+SQS (AWS core)	message queue; visibility timeout + DLQ are the two ideas that matter.
+SNS (AWS core)	pub/sub fan-out; one publish, many subscribers; stores nothing.
+DynamoDB (AWS core)	serverless NoSQL; partition key picks the node, `query` ≠ `scan`.
+Lambda (AWS core)	event-driven functions; handler + execution role + 15-minute limit.
+ECR (AWS core)	private container registry; repos hold SHA-tagged images.
+ECS / Fargate (AWS core)	cluster → task definition → service → task; Fargate = no hosts to manage.
+EC2 (AWS core)	rented VMs; families (`t` cheap, `g`/`p` GPU); AMIs are launch templates.
+EBS (AWS core)	network disks that outlive instances (and keep billing after stop).
+RDS (AWS core)	managed relational DBs; never publicly accessible.
+API Gateway (AWS core)	HTTPS front door: auth, throttling, CORS in front of Lambda.
+CloudWatch (AWS core)	metrics (alert on these) + logs (debug with these) + alarms + dashboards.
+Bedrock (AWS core)	foundation models as an API; pay per 1k tokens; Knowledge Bases = managed RAG.
+SageMaker (AWS core)	training jobs, notebooks, endpoints; endpoints bill while they exist.
+VPC (Networking)	your private region-scoped network (CIDR like `10.0.0.0/16`).
+Subnet (Networking)	AZ-scoped slice; public = route to IGW, private = via NAT or nothing.
+Route table (Networking)	where a subnet's packets go; `0.0.0.0/0 → IGW` means public.
+IGW / NAT (Networking)	internet door (free-ish) vs private-subnet way out (~$32+/mo idle).
+Security group (Networking)	stateful resource firewall, allow-rules only; check these first when unreachable.
+NACL (Networking)	stateless subnet firewall; second layer, rarely touched daily.
+IAM (IAM & security)	who can do what; users (people) vs roles (code, temporary creds) vs groups.
+Policy (IAM & security)	JSON of Effect/Action/Resource; explicit Deny always wins.
+Least privilege (IAM & security)	start from nothing, add grants; never start from `*`.
+MFA (IAM & security)	second factor; also enforceable inside policies.
+KMS (IAM & security)	master keys; envelope encryption (keys encrypt keys).
+Secrets Manager / SSM Parameter Store (IAM & security)	runtime secrets + config; never hardcode either.
+OIDC (IAM & security)	CI pipelines assuming AWS roles without stored keys.
+Terraform (IaC & delivery)	desired-state declarations; `plan` is a code review, `apply` executes.
+State file (IaC & delivery)	maps your code to real resource IDs; lose it, lose ownership.
+Module (IaC & delivery)	folder of `.tf` with variables in, outputs out.
+CI/CD (IaC & delivery)	every push builds+tests (CI); green main ships itself (CD).
+Artifact (IaC & delivery)	immutable build output (SHA-tagged image); rollback = redeploy old SHA.
+Idempotency (Concepts)	safe to retry; SQS delivers at-least-once, so consumers must be.
+Eventual consistency (Concepts)	reads may lag writes; design for it (IAM propagation, S3 listings).
+Cold start (Concepts)	first-invocation latency; small images + lean deps fight it.
+Drift (Concepts)	reality changed outside your IaC; `plan` reveals it.
+Blast radius (Concepts)	how much breaks when one thing does; least privilege shrinks it.
