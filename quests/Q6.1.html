@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Q6.1 First config: provider + bucket — Cloud Dojo</title>
+<style>:root{--bg:#0d1117;--card:#161b22;--line:#30363d;--txt:#e6edf3;
+--mut:#8b949e;--grn:#3fb950;--amb:#d29922;--blu:#58a6ff;--pur:#bc8cff}
+*{box-sizing:border-box}body{background:var(--bg);color:var(--txt);
+font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;margin:0;
+padding:24px;max-width:860px;margin-inline:auto;line-height:1.6}
+.crumb{margin-bottom:14px;font-size:.9rem}.crumb a{color:var(--blu);text-decoration:none}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:18px}
+.hero h1{font-size:1.4rem;margin:0 0 6px}.meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+color:var(--mut);font-size:.9rem}
+.pill{padding:2px 10px;border-radius:999px;font-size:.8rem;border:1px solid var(--line)}
+.pill.done{color:var(--grn);border-color:var(--grn)}.pill.active{color:var(--amb);border-color:var(--amb)}
+.pill.locked{color:var(--mut)}
+article{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+article h2{font-size:1.05rem;margin:20px 0 8px;color:var(--blu)}article h2:first-child{margin-top:0}
+article p{margin:8px 0}article ul{margin:8px 0;padding-left:22px}article li{margin:4px 0}
+article a{color:var(--blu)}code{background:#21262d;padding:2px 6px;border-radius:6px;
+font-family:ui-monospace,monospace;font-size:.88em}
+pre{background:#010409;border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
+pre code{background:none;padding:0}
+.nav{display:flex;justify-content:space-between;gap:12px;margin:18px 0;flex-wrap:wrap}
+.nav-btn{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 14px;
+color:var(--txt);text-decoration:none;font-size:.9rem}.nav-btn:hover{border-color:var(--blu)}
+footer{color:var(--mut);font-size:.85rem;margin-top:16px}footer code{background:#21262d;
+padding:2px 6px;border-radius:6px}</style>
+</head>
+<body>
+<div class="crumb"><a href="../dashboard.html">← Cloud Dojo dashboard</a> · Phase 6 — Terraform IaC</div>
+<div class="hero">
+<h1>Q6.1 — First config: provider + bucket</h1>
+<div class="meta"><span class="pill locked">🔒 locked</span><span>30 XP</span><span>Phase 6 — Terraform IaC</span></div>
+</div>
+<article>
+<h1>Q6.1 — First config: provider + bucket (30 XP)</h1>
+<p><strong>Phase:</strong> Phase 6 — Terraform IaC</p>
+<h2>Concept</h2>
+<p>Terraform is infrastructure as code: you describe the resources you want in text files, and Terraform makes reality match that description. Instead of clicking around a cloud console, you write a <code>provider</code> block (which cloud, and where) plus one or more <code>resource</code> blocks (what to create). The golden loop is write, <code>terraform init</code>, <code>terraform plan</code>, read the plan, <code>terraform apply</code>.</p>
+<p>In this quest the AWS provider points at the local emulator by overriding its <code>endpoints</code> to <code>http://localhost:4566</code> and using fake credentials, so nothing costs money. One <code>aws_s3_bucket</code> proves the whole loop works end to end. Every later quest is just more resources in the same pattern.</p>
+<h2>Uses</h2>
+<ul>
+<li>Reproducible environments: the same config builds dev, staging, and prod.</li>
+<li>Infrastructure review: <code>plan</code> is a diff you can read and approve before it runs.</li>
+<li>Onboarding: <code>git clone</code> plus <code>terraform apply</code> replaces a wiki page of setup steps.</li>
+<li>Emulator-first development: one config targets localhost now and real AWS later by swapping endpoints.</li>
+<li>Drift detection: re-running <code>plan</code> reveals anything changed outside of code.</li>
+</ul>
+<h2>Key info</h2>
+<ul>
+<li><code>terraform init</code> downloads the AWS provider and creates <code>.terraform/</code>.</li>
+<li><code>terraform plan</code> prints what would change; <code>terraform apply</code> runs it.</li>
+<li>The endpoint override is the emulator trick:</li>
+</ul>
+<pre><code>
+provider &quot;aws&quot; {
+  region                      = &quot;us-east-1&quot;
+  access_key                  = &quot;test&quot;
+  secret_key                  = &quot;test&quot;
+  skip_credentials_validation = true
+  skip_requesting_account_id  = true
+  skip_metadata_api_check     = true
+  endpoints {
+    s3 = &quot;http://localhost:4566&quot;
+  }
+}
+
+resource &quot;aws_s3_bucket&quot; &quot;dojo&quot; {
+  bucket = &quot;dojo-first-bucket&quot;
+}
+</code></pre>
+<ul>
+<li>Read the plan line by line: the summary lists creates, changes, and destroys.</li>
+<li>Success looks like <code>Apply complete! Resources: 1 added, 0 changed, 0 destroyed.</code></li>
+</ul>
+<h2>Pitfalls</h2>
+<ul>
+<li>Running <code>apply</code> without reading <code>plan</code>. The plan is the whole point; skipping it is how people create 40 NAT gateways.</li>
+<li>Using fake credentials without the <code>skip_*</code> flags. Real AWS validation rejects them and plan fails cryptically.</li>
+<li>Forgetting the <code>endpoints</code> override and accidentally talking to real AWS, or hanging on a network call.</li>
+</ul>
+<h2>Done check</h2>
+<p>paste the <code>plan</code> resource summary + <code>Apply complete! Resources: 1 added</code>.</p>
+<h2>Links</h2>
+<ul>
+<li>Terraform CLI workflow — https://developer.hashicorp.com/terraform/tutorials/cli</li>
+<li>AWS provider — https://registry.terraform.io/providers/hashicorp/aws/latest/docs</li>
+<li>aws_s3_bucket — https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket</li>
+</ul>
+</article>
+<div class="nav"><span><a class="nav-btn" href="Q5.5.html">← Q5.5 👹 Boss: $0 audit</a></span><span><a class="nav-btn" href="Q6.2.html">Q6.2 Variables + outputs →</a></span></div>
+<footer>Source: <code>quests/Q6.1.md</code> · re-run <code>python3 shared/render_dashboard.py</code> after editing.</footer>
+</body>
+</html>
