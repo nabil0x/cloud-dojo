@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Q2.3 The DNS lesson — Cloud Dojo</title>
+<style>:root{--bg:#0d1117;--card:#161b22;--line:#30363d;--txt:#e6edf3;
+--mut:#8b949e;--grn:#3fb950;--amb:#d29922;--blu:#58a6ff;--pur:#bc8cff}
+*{box-sizing:border-box}body{background:var(--bg);color:var(--txt);
+font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;margin:0;
+padding:24px;max-width:860px;margin-inline:auto;line-height:1.6}
+.crumb{margin-bottom:14px;font-size:.9rem}.crumb a{color:var(--blu);text-decoration:none}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:18px}
+.hero h1{font-size:1.4rem;margin:0 0 6px}.meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+color:var(--mut);font-size:.9rem}
+.pill{padding:2px 10px;border-radius:999px;font-size:.8rem;border:1px solid var(--line)}
+.pill.done{color:var(--grn);border-color:var(--grn)}.pill.active{color:var(--amb);border-color:var(--amb)}
+.pill.locked{color:var(--mut)}
+article{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+article h2{font-size:1.05rem;margin:20px 0 8px;color:var(--blu)}article h2:first-child{margin-top:0}
+article p{margin:8px 0}article ul{margin:8px 0;padding-left:22px}article li{margin:4px 0}
+article a{color:var(--blu)}code{background:#21262d;padding:2px 6px;border-radius:6px;
+font-family:ui-monospace,monospace;font-size:.88em}
+pre{background:#010409;border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
+pre code{background:none;padding:0}
+.nav{display:flex;justify-content:space-between;gap:12px;margin:18px 0;flex-wrap:wrap}
+.nav-btn{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 14px;
+color:var(--txt);text-decoration:none;font-size:.9rem}.nav-btn:hover{border-color:var(--blu)}
+footer{color:var(--mut);font-size:.85rem;margin-top:16px}footer code{background:#21262d;
+padding:2px 6px;border-radius:6px}</style>
+</head>
+<body>
+<div class="crumb"><a href="../dashboard.html">← Cloud Dojo dashboard</a> · Phase 2 — Compose Capstone</div>
+<div class="hero">
+<h1>Q2.3 — The DNS lesson</h1>
+<div class="meta"><span class="pill locked">🔒 locked</span><span>30 XP</span><span>Phase 2 — Compose Capstone</span></div>
+</div>
+<article>
+<h1>Q2.3 — The DNS lesson (30 XP)</h1>
+<p><strong>Phase:</strong> Phase 2 — Compose Capstone</p>
+<h2>Concept</h2>
+<p>This quest breaks the app on purpose so the fix sticks.</p>
+<p>Inside a container, <code>localhost</code> means that container, never your laptop.</p>
+<p>So if you set <code>AWS_ENDPOINT_URL=http://localhost:4566</code> on the app service, the app tries to reach an emulator running inside itself, finds nothing, and <code>/s3</code> fails.</p>
+<p>The correct value is <code>http://emulator:4566</code>, because Compose gives every service a DNS name equal to its service name on the shared network.</p>
+<p>You will edit the env var, rebuild, watch it fail, then set it back, rebuild, and watch it pass.</p>
+<p>The lesson is not the typo, it is the reflex: when a container cannot reach a service, ask &quot;localhost from whose perspective?&quot;</p>
+<h2>Uses</h2>
+<ul>
+<li>Debugging container-to-container connection errors, one of the most common Docker problems.</li>
+<li>Configuring service discovery in a Compose stack today and in Kubernetes later.</li>
+<li>Understanding why a connection works from your laptop but fails from inside a container.</li>
+<li>Building the instinct that a host and a container have different views of the network.</li>
+<li>Explaining the same idea to teammates when a deploy &quot;cannot reach the database&quot;.</li>
+</ul>
+<h2>Key info</h2>
+<ul>
+<li>Break it: set the app&#x27;s <code>AWS_ENDPOINT_URL</code> to <code>http://localhost:4566</code> in <code>compose.yaml</code>, then <code>docker compose up -d --build</code>.</li>
+<li>Fix it: set it back to <code>http://emulator:4566</code>, then <code>docker compose up -d --build</code>.</li>
+<li>Service DNS rule: a service is reachable at <code>http://&lt;service-name&gt;:&lt;container-port&gt;</code> from other services.</li>
+<li>Host access uses the published port, so <code>http://localhost:4566</code> works from your laptop.</li>
+<li>Scope the logs to one service while testing: <code>docker compose logs -f app</code>.</li>
+<li>Compose creates one default network per project; all its services join it automatically.</li>
+<li>Inspect the network yourself: <code>docker network inspect phase-02-compose_default</code>.</li>
+<li>The same rule applies to the emulator: the app reaches it as <code>emulator</code>, never <code>localhost</code>.</li>
+</ul>
+<h2>Pitfalls</h2>
+<ul>
+<li>Changing the env var but skipping <code>--build</code> or recreation, so the old value is still baked into the running container.</li>
+<li>Editing the port mapping instead of the endpoint. The real error is name resolution, not a missing port.</li>
+<li>Assuming <code>localhost</code> is universal. It is always relative to whoever is making the call.</li>
+</ul>
+<h2>Done check</h2>
+<p>paste the failing response + the passing response, and one sentence on why.</p>
+<h2>Links</h2>
+<ul>
+<li>Compose networking: https://docs.docker.com/compose/how-tos/networking/</li>
+<li>Docker networking overview: https://docs.docker.com/engine/network/</li>
+<li>Compose startup order and service names: https://docs.docker.com/compose/how-tos/startup-order/</li>
+</ul>
+</article>
+<div class="nav"><span><a class="nav-btn" href="Q2.2.html">← Q2.2 Add the app service</a></span><span><a class="nav-btn" href="Q2.4.html">Q2.4 Seed on demand →</a></span></div>
+<footer>Source: <code>quests/Q2.3.md</code> · re-run <code>python3 shared/render_dashboard.py</code> after editing.</footer>
+</body>
+</html>

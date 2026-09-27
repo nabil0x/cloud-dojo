@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Q2.2 Add the app service — Cloud Dojo</title>
+<style>:root{--bg:#0d1117;--card:#161b22;--line:#30363d;--txt:#e6edf3;
+--mut:#8b949e;--grn:#3fb950;--amb:#d29922;--blu:#58a6ff;--pur:#bc8cff}
+*{box-sizing:border-box}body{background:var(--bg);color:var(--txt);
+font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;margin:0;
+padding:24px;max-width:860px;margin-inline:auto;line-height:1.6}
+.crumb{margin-bottom:14px;font-size:.9rem}.crumb a{color:var(--blu);text-decoration:none}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:18px}
+.hero h1{font-size:1.4rem;margin:0 0 6px}.meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+color:var(--mut);font-size:.9rem}
+.pill{padding:2px 10px;border-radius:999px;font-size:.8rem;border:1px solid var(--line)}
+.pill.done{color:var(--grn);border-color:var(--grn)}.pill.active{color:var(--amb);border-color:var(--amb)}
+.pill.locked{color:var(--mut)}
+article{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+article h2{font-size:1.05rem;margin:20px 0 8px;color:var(--blu)}article h2:first-child{margin-top:0}
+article p{margin:8px 0}article ul{margin:8px 0;padding-left:22px}article li{margin:4px 0}
+article a{color:var(--blu)}code{background:#21262d;padding:2px 6px;border-radius:6px;
+font-family:ui-monospace,monospace;font-size:.88em}
+pre{background:#010409;border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
+pre code{background:none;padding:0}
+.nav{display:flex;justify-content:space-between;gap:12px;margin:18px 0;flex-wrap:wrap}
+.nav-btn{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 14px;
+color:var(--txt);text-decoration:none;font-size:.9rem}.nav-btn:hover{border-color:var(--blu)}
+footer{color:var(--mut);font-size:.85rem;margin-top:16px}footer code{background:#21262d;
+padding:2px 6px;border-radius:6px}</style>
+</head>
+<body>
+<div class="crumb"><a href="../dashboard.html">← Cloud Dojo dashboard</a> · Phase 2 — Compose Capstone</div>
+<div class="hero">
+<h1>Q2.2 — Add the app service</h1>
+<div class="meta"><span class="pill locked">🔒 locked</span><span>40 XP</span><span>Phase 2 — Compose Capstone</span></div>
+</div>
+<article>
+<h1>Q2.2 — Add the app service (40 XP)</h1>
+<p><strong>Phase:</strong> Phase 2 — Compose Capstone</p>
+<h2>Concept</h2>
+<p>Now the stack stops being just an emulator and becomes an application.</p>
+<p>The <code>app/</code> folder holds a small Python service (<code>app.py</code>) and its <code>Dockerfile</code>, already scaffolded for you.</p>
+<p>Compose builds that image locally through <code>build: ./app</code> instead of pulling it, then runs it as a second service next to the emulator.</p>
+<p>Two services on one Compose network talk to each other by name, and the app is configured with <code>AWS_ENDPOINT_URL=http://emulator:4566</code> so its AWS calls land on the emulator container, not the public internet.</p>
+<p>The <code>/health</code> endpoint proves the web server is up; <code>/s3</code> proves the app can reach AWS APIs through the emulator.</p>
+<p>This is where both halves of the mental model finally meet: a real HTTP app talking to a real, emulated cloud.</p>
+<h2>Uses</h2>
+<ul>
+<li>Local end-to-end testing where a web service talks to cloud APIs without leaving your laptop.</li>
+<li>Reproducing a bug that only appears when the app and the cloud service run together.</li>
+<li>Demoing a backend to a teammate with one command and zero cloud spend.</li>
+<li>Practicing container networking and environment-variable configuration.</li>
+<li>Building the multi-service habit that later becomes ECS or Kubernetes.</li>
+</ul>
+<h2>Key info</h2>
+<ul>
+<li>Read the scaffold first: <code>app/app.py</code> and <code>app/Dockerfile</code>.</li>
+<li>Build and start everything: <code>docker compose up -d --build</code></li>
+<li>Check the web server: <code>curl localhost:8080/health</code></li>
+<li>Check the AWS path: <code>curl localhost:8080/s3</code></li>
+<li>The app reads its endpoint from <code>AWS_ENDPOINT_URL</code>, set in <code>compose.yaml</code> under the app service&#x27;s <code>environment:</code>.</li>
+<li><code>--build</code> forces a fresh image build. Without it, Compose may reuse an old image and silently ignore your edits.</li>
+<li>Rebuild one service only: <code>docker compose up -d --build app</code></li>
+</ul>
+<h2>Pitfalls</h2>
+<ul>
+<li>Editing <code>app.py</code> and forgetting <code>--build</code>, then wondering why nothing changed.</li>
+<li>Expecting <code>/s3</code> to list buckets before the seed script has run. An empty list is the emulator working correctly, not a failure.</li>
+<li>Mixing up the two ports: 8080 is your app, 4566 is the emulator.</li>
+</ul>
+<h2>Done check</h2>
+<p>paste both responses.</p>
+<h2>Links</h2>
+<ul>
+<li><code>docker compose up</code> reference: https://docs.docker.com/reference/cli/docker/compose/up/</li>
+<li>Dockerfile reference: https://docs.docker.com/reference/dockerfile/</li>
+<li>Building services in Compose: https://docs.docker.com/compose/how-tos/startup-order/</li>
+</ul>
+</article>
+<div class="nav"><span><a class="nav-btn" href="Q2.1.html">← Q2.1 Stack up the emulator</a></span><span><a class="nav-btn" href="Q2.3.html">Q2.3 The DNS lesson →</a></span></div>
+<footer>Source: <code>quests/Q2.2.md</code> · re-run <code>python3 shared/render_dashboard.py</code> after editing.</footer>
+</body>
+</html>

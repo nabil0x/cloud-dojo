@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Q2.1 Stack up the emulator — Cloud Dojo</title>
+<style>:root{--bg:#0d1117;--card:#161b22;--line:#30363d;--txt:#e6edf3;
+--mut:#8b949e;--grn:#3fb950;--amb:#d29922;--blu:#58a6ff;--pur:#bc8cff}
+*{box-sizing:border-box}body{background:var(--bg);color:var(--txt);
+font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;margin:0;
+padding:24px;max-width:860px;margin-inline:auto;line-height:1.6}
+.crumb{margin-bottom:14px;font-size:.9rem}.crumb a{color:var(--blu);text-decoration:none}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:18px}
+.hero h1{font-size:1.4rem;margin:0 0 6px}.meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+color:var(--mut);font-size:.9rem}
+.pill{padding:2px 10px;border-radius:999px;font-size:.8rem;border:1px solid var(--line)}
+.pill.done{color:var(--grn);border-color:var(--grn)}.pill.active{color:var(--amb);border-color:var(--amb)}
+.pill.locked{color:var(--mut)}
+article{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+article h2{font-size:1.05rem;margin:20px 0 8px;color:var(--blu)}article h2:first-child{margin-top:0}
+article p{margin:8px 0}article ul{margin:8px 0;padding-left:22px}article li{margin:4px 0}
+article a{color:var(--blu)}code{background:#21262d;padding:2px 6px;border-radius:6px;
+font-family:ui-monospace,monospace;font-size:.88em}
+pre{background:#010409;border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
+pre code{background:none;padding:0}
+.nav{display:flex;justify-content:space-between;gap:12px;margin:18px 0;flex-wrap:wrap}
+.nav-btn{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 14px;
+color:var(--txt);text-decoration:none;font-size:.9rem}.nav-btn:hover{border-color:var(--blu)}
+footer{color:var(--mut);font-size:.85rem;margin-top:16px}footer code{background:#21262d;
+padding:2px 6px;border-radius:6px}</style>
+</head>
+<body>
+<div class="crumb"><a href="../dashboard.html">← Cloud Dojo dashboard</a> · Phase 2 — Compose Capstone</div>
+<div class="hero">
+<h1>Q2.1 — Stack up the emulator</h1>
+<div class="meta"><span class="pill locked">🔒 locked</span><span>30 XP</span><span>Phase 2 — Compose Capstone</span></div>
+</div>
+<article>
+<h1>Q2.1 — Stack up the emulator (30 XP)</h1>
+<p><strong>Phase:</strong> Phase 2 — Compose Capstone</p>
+<h2>Concept</h2>
+<p>Docker Compose describes a whole multi-container environment in one YAML file.</p>
+<p>Each entry under <code>services:</code> is a single container role, and Compose wires up a private network where every service reaches the others by name.</p>
+<p>The emulator (MiniStack by default, LocalStack as a swap) is the first service in your stack, and bringing it up alone proves your <code>compose.yaml</code> is valid before anything else joins.</p>
+<p>Running <code>docker compose up -d emulator</code> starts just that one service in the background so your terminal stays free.</p>
+<p>The emulator listens on port 4566 inside the Compose network, and the port mapping exposes that same port on your laptop.</p>
+<p>From here on, every <code>aws</code> command or <code>curl</code> you point at <code>http://localhost:4566</code> reaches the emulator, and that endpoint is the foundation later quests build on.</p>
+<h2>Uses</h2>
+<ul>
+<li>Spin up a full local AWS-like environment for development without an AWS account.</li>
+<li>Give every teammate the same services with one <code>docker compose up</code>, no manual setup.</li>
+<li>Run integration tests against real APIs (S3, SQS, DynamoDB) without paying or touching the cloud.</li>
+<li>Prototype an app locally before committing to production infrastructure.</li>
+<li>Learn Compose the same way you will later describe ECS tasks and services.</li>
+</ul>
+<h2>Key info</h2>
+<ul>
+<li>Start just the emulator: <code>cd phase-02-compose &amp;&amp; docker compose up -d emulator</code></li>
+<li>Confirm it is alive: <code>curl -s http://localhost:4566/_ministack/health</code></li>
+<li>Inspect running containers: <code>docker compose ps</code></li>
+<li>Follow one service&#x27;s logs: <code>docker compose logs -f emulator</code></li>
+<li>Default image is MiniStack (no signup). To swap to LocalStack, change <code>image:</code> and add <code>LOCALSTACK_AUTH_TOKEN</code>; the port stays 4566.</li>
+<li>Fake credentials are fine locally. Region plus placeholder <code>AWS_ACCESS_KEY_ID</code> and <code>AWS_SECRET_ACCESS_KEY</code> come from the stack&#x27;s <code>environment:</code>.</li>
+<li>Stop without deleting data: <code>docker compose stop emulator</code></li>
+</ul>
+<h2>Pitfalls</h2>
+<ul>
+<li>Forgetting <code>-d</code> leaves the stack in the foreground and blocks your terminal.</li>
+<li>Assuming <code>up</code> waits for readiness. It starts containers; it does not guarantee the emulator finished booting, so give it a second before hitting health.</li>
+<li>Running <code>docker compose up</code> from the wrong folder. Compose reads <code>compose.yaml</code> from the current directory, so <code>cd phase-02-compose</code> first.</li>
+</ul>
+<h2>Done check</h2>
+<p>paste the health JSON + <code>docker compose ps</code>.</p>
+<h2>Links</h2>
+<ul>
+<li>Compose overview: https://docs.docker.com/compose/</li>
+<li><code>docker compose up</code> reference: https://docs.docker.com/reference/cli/docker/compose/up/</li>
+<li>Compose file reference: https://docs.docker.com/reference/compose-file/</li>
+</ul>
+</article>
+<div class="nav"><span><a class="nav-btn" href="Q1.6.html">← Q1.6 Bridge DNS: containers talking</a></span><span><a class="nav-btn" href="Q2.2.html">Q2.2 Add the app service →</a></span></div>
+<footer>Source: <code>quests/Q2.1.md</code> · re-run <code>python3 shared/render_dashboard.py</code> after editing.</footer>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Q2.5 👹 Boss: full rebuild loop — Cloud Dojo</title>
+<style>:root{--bg:#0d1117;--card:#161b22;--line:#30363d;--txt:#e6edf3;
+--mut:#8b949e;--grn:#3fb950;--amb:#d29922;--blu:#58a6ff;--pur:#bc8cff}
+*{box-sizing:border-box}body{background:var(--bg);color:var(--txt);
+font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;margin:0;
+padding:24px;max-width:860px;margin-inline:auto;line-height:1.6}
+.crumb{margin-bottom:14px;font-size:.9rem}.crumb a{color:var(--blu);text-decoration:none}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:18px}
+.hero h1{font-size:1.4rem;margin:0 0 6px}.meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+color:var(--mut);font-size:.9rem}
+.pill{padding:2px 10px;border-radius:999px;font-size:.8rem;border:1px solid var(--line)}
+.pill.done{color:var(--grn);border-color:var(--grn)}.pill.active{color:var(--amb);border-color:var(--amb)}
+.pill.locked{color:var(--mut)}
+article{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+article h2{font-size:1.05rem;margin:20px 0 8px;color:var(--blu)}article h2:first-child{margin-top:0}
+article p{margin:8px 0}article ul{margin:8px 0;padding-left:22px}article li{margin:4px 0}
+article a{color:var(--blu)}code{background:#21262d;padding:2px 6px;border-radius:6px;
+font-family:ui-monospace,monospace;font-size:.88em}
+pre{background:#010409;border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
+pre code{background:none;padding:0}
+.nav{display:flex;justify-content:space-between;gap:12px;margin:18px 0;flex-wrap:wrap}
+.nav-btn{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 14px;
+color:var(--txt);text-decoration:none;font-size:.9rem}.nav-btn:hover{border-color:var(--blu)}
+footer{color:var(--mut);font-size:.85rem;margin-top:16px}footer code{background:#21262d;
+padding:2px 6px;border-radius:6px}</style>
+</head>
+<body>
+<div class="crumb"><a href="../dashboard.html">← Cloud Dojo dashboard</a> · Phase 2 — Compose Capstone</div>
+<div class="hero">
+<h1>Q2.5 — 👹 Boss: full rebuild loop</h1>
+<div class="meta"><span class="pill locked">🔒 locked</span><span>25 XP</span><span>Phase 2 — Compose Capstone</span></div>
+</div>
+<article>
+<h1>Q2.5 — Boss: full rebuild loop (25 XP)</h1>
+<p><strong>Phase:</strong> Phase 2 — Compose Capstone</p>
+<h2>Concept</h2>
+<p>This is the boss fight: tear the whole stack down and bring it back from nothing.</p>
+<p><code>docker compose down -v</code> stops and removes every container and, because of <code>-v</code>, the named volumes too.</p>
+<p>That means your emulator data is wiped, so &quot;it works on my machine&quot; is no longer a hiding place.</p>
+<p>From a clean slate you run <code>docker compose up -d --build</code>, re-seed, and verify both <code>/health</code> and <code>/s3</code>.</p>
+<p>Doing this under three minutes is the par.</p>
+<p>The real skill is the loop itself: down, up, seed, verify. If you can run that loop confidently, you can reproduce any state your stack can reach, which is what makes debugging and onboarding fast.</p>
+<h2>Uses</h2>
+<ul>
+<li>Proving a stack rebuilds cleanly from zero, the strongest test of a reproducible dev environment.</li>
+<li>Onboarding: a new teammate runs one loop and has a working environment.</li>
+<li>Recovering when local state gets corrupted or inconsistent.</li>
+<li>Timing yourself to build muscle memory for the rebuild cycle.</li>
+<li>Catching hidden dependencies on leftover volumes before they reach CI.</li>
+</ul>
+<h2>Key info</h2>
+<ul>
+<li>Nuke everything, including volumes: <code>docker compose down -v</code></li>
+<li>Rebuild and start: <code>docker compose up -d --build</code></li>
+<li>Re-seed from the host: <code>bash ../shared/seed.sh</code></li>
+<li>Verify: <code>curl localhost:8080/health</code> and <code>curl localhost:8080/s3</code></li>
+<li>Par time is under 3 minutes for the whole loop.</li>
+<li><code>down</code> without <code>-v</code> keeps volumes and their data. The <code>-v</code> is what makes this a true reset.</li>
+<li>Confirm a clean slate first: <code>docker compose ps</code> should show no running services.</li>
+</ul>
+<h2>Pitfalls</h2>
+<ul>
+<li>Forgetting <code>-v</code> and getting old data back, so the &quot;rebuild&quot; was not actually clean.</li>
+<li>Skipping the re-seed, then finding <code>/s3</code> empty on a correctly working stack.</li>
+<li>Running the commands out of order, for example checking <code>/s3</code> before the app has finished starting.</li>
+</ul>
+<h2>Done check</h2>
+<p>paste all three outputs in order. Time yourself — under 3 minutes is the par.</p>
+<h2>Links</h2>
+<ul>
+<li><code>docker compose down</code> reference: https://docs.docker.com/reference/cli/docker/compose/down/</li>
+<li>Compose volumes: https://docs.docker.com/reference/compose-file/volumes/</li>
+<li><code>docker compose ps</code> reference: https://docs.docker.com/reference/cli/docker/compose/ps/</li>
+</ul>
+</article>
+<div class="nav"><span><a class="nav-btn" href="Q2.4.html">← Q2.4 Seed on demand</a></span><span><a class="nav-btn" href="Q3.1.html">Q3.1 Build a Lambda image →</a></span></div>
+<footer>Source: <code>quests/Q2.5.md</code> · re-run <code>python3 shared/render_dashboard.py</code> after editing.</footer>
+</body>
+</html>
