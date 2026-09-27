@@ -34,7 +34,9 @@ def main():
             if badge_name and badge_name not in rules:
                 fail(f"badge not in GAME-RULES: {badge_name}")
     link_re = re.compile(r"\[(?:[^\]]+)\]\(([^)#]+)(?:#[^)]+)?\)")
-    for md in list(ROOT.glob("*.md")) + list(ROOT.glob("phase-*/README.md")) + [
+    for md in list(ROOT.glob("*.md")) + list(ROOT.glob("docs/**/*.md")) + list(
+        ROOT.glob("cheatsheets/*.md")
+    ) + list(ROOT.glob("phase-*/README.md")) + [
         ROOT / "track-iam-sandbox" / "README.md",
         ROOT / "module-moto-testing" / "README.md",
     ]:

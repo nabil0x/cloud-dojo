@@ -10,8 +10,8 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-GLOSSARY = ROOT / "GLOSSARY.md"
-OUT = ROOT / "flashcards" / "cloud-dojo.csv"
+GLOSSARY = ROOT / "docs" / "learn" / "GLOSSARY.md"
+OUT = ROOT / "docs" / "learn" / "flashcards" / "cloud-dojo.csv"
 
 
 def main():
