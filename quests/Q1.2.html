@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Q1.2 SQS queues + SNS topics — Cloud Dojo</title>
+<style>:root{--bg:#0d1117;--card:#161b22;--line:#30363d;--txt:#e6edf3;
+--mut:#8b949e;--grn:#3fb950;--amb:#d29922;--blu:#58a6ff;--pur:#bc8cff}
+*{box-sizing:border-box}body{background:var(--bg);color:var(--txt);
+font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;margin:0;
+padding:24px;max-width:860px;margin-inline:auto;line-height:1.6}
+.crumb{margin-bottom:14px;font-size:.9rem}.crumb a{color:var(--blu);text-decoration:none}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:18px}
+.hero h1{font-size:1.4rem;margin:0 0 6px}.meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+color:var(--mut);font-size:.9rem}
+.pill{padding:2px 10px;border-radius:999px;font-size:.8rem;border:1px solid var(--line)}
+.pill.done{color:var(--grn);border-color:var(--grn)}.pill.active{color:var(--amb);border-color:var(--amb)}
+.pill.locked{color:var(--mut)}
+article{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+article h2{font-size:1.05rem;margin:20px 0 8px;color:var(--blu)}article h2:first-child{margin-top:0}
+article p{margin:8px 0}article ul{margin:8px 0;padding-left:22px}article li{margin:4px 0}
+article a{color:var(--blu)}code{background:#21262d;padding:2px 6px;border-radius:6px;
+font-family:ui-monospace,monospace;font-size:.88em}
+pre{background:#010409;border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
+pre code{background:none;padding:0}
+.nav{display:flex;justify-content:space-between;gap:12px;margin:18px 0;flex-wrap:wrap}
+.nav-btn{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 14px;
+color:var(--txt);text-decoration:none;font-size:.9rem}.nav-btn:hover{border-color:var(--blu)}
+footer{color:var(--mut);font-size:.85rem;margin-top:16px}footer code{background:#21262d;
+padding:2px 6px;border-radius:6px}</style>
+</head>
+<body>
+<div class="crumb"><a href="../dashboard.html">← Cloud Dojo dashboard</a> · Phase 1 — First AWS Services</div>
+<div class="hero">
+<h1>Q1.2 — SQS queues + SNS topics</h1>
+<div class="meta"><span class="pill locked">🔒 locked</span><span>30 XP</span><span>Phase 1 — First AWS Services</span></div>
+</div>
+<article>
+<h1>Q1.2 — SQS queues + SNS topics (30 XP)</h1>
+<p><strong>Phase:</strong> Phase 1 — First AWS Services</p>
+<h2>Concept</h2>
+<p>SQS is a message queue: producers send, consumers receive, process, then delete. A received message isn&#x27;t removed; it hides for the visibility timeout and reappears if you never delete it, which gives at-least-once delivery.</p>
+<p>SNS is pub/sub: one publish fans out to every subscription. Wiring an SNS topic to an SQS queue is the classic fan-out pattern and the backbone of decoupled systems. Together, queues and topics let services work at their own pace instead of waiting on each other.</p>
+<h2>Uses</h2>
+<ul>
+<li>Buffer bursts of work so slow consumers don&#x27;t drop tasks.</li>
+<li>Decouple a web tier from background workers.</li>
+<li>Broadcast one event to several independent consumers.</li>
+<li>Retry failed jobs safely with a dead-letter queue.</li>
+<li>Fan out notifications to email, Lambda, and queues at once.</li>
+</ul>
+<h2>Key info</h2>
+<ul>
+<li>Create a queue: <code>aws --endpoint-url=http://localhost:4566 sqs create-queue --queue-name dojo-queue</code>.</li>
+<li>Send: <code>aws --endpoint-url=http://localhost:4566 sqs send-message --queue-url &lt;url&gt; --message-body &quot;hello&quot;</code>.</li>
+<li>Receive: <code>sqs receive-message --queue-url &lt;url&gt;</code> returns JSON with a <code>ReceiptHandle</code>.</li>
+<li>Delete only after success: <code>sqs delete-message --queue-url &lt;url&gt; --receipt-handle &lt;handle&gt;</code>.</li>
+<li>Create a topic: <code>aws --endpoint-url=http://localhost:4566 sns create-topic --name dojo-topic</code>.</li>
+<li>Subscribe: <code>sns subscribe --topic-arn &lt;arn&gt; --protocol sqs --notification-endpoint &lt;queue-arn&gt;</code>.</li>
+<li>Publish: <code>sns publish --topic-arn &lt;arn&gt; --message &quot;hi&quot;</code>.</li>
+<li>Visibility timeout defaults to 30 seconds and is what hides a message after receipt.</li>
+<li>A dead-letter queue catches messages that fail too many times, for later review.</li>
+<li>FIFO queues add ordering and dedup, but standard queues are the default to learn.</li>
+<li><code>get-queue-attributes</code> returns the queue URL and ARN you need for SNS or DLQ wiring.</li>
+</ul>
+<h2>Pitfalls</h2>
+<ul>
+<li>Deleting the message before processing it loses work if the consumer crashes mid-job.</li>
+<li>Re-running receive immediately while the message is still visible returns nothing; the timeout must expire.</li>
+<li>SNS stores nothing: publishing with no subscriber means the message goes nowhere.</li>
+</ul>
+<h2>Done check</h2>
+<p>paste the received message JSON.</p>
+<h2>Links</h2>
+<ul>
+<li>Amazon SQS developer guide — https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/welcome.html</li>
+<li>Amazon SNS developer guide — https://docs.aws.amazon.com/sns/latest/dg/welcome.html</li>
+<li>AWS CLI sqs commands — https://docs.aws.amazon.com/cli/latest/reference/sqs/</li>
+</ul>
+</article>
+<div class="nav"><span><a class="nav-btn" href="Q1.1.html">← Q1.1 S3 buckets and objects</a></span><span><a class="nav-btn" href="Q1.3.html">Q1.3 DynamoDB table + CRUD →</a></span></div>
+<footer>Source: <code>quests/Q1.2.md</code> · re-run <code>python3 shared/render_dashboard.py</code> after editing.</footer>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Q1.1 S3 buckets and objects — Cloud Dojo</title>
+<style>:root{--bg:#0d1117;--card:#161b22;--line:#30363d;--txt:#e6edf3;
+--mut:#8b949e;--grn:#3fb950;--amb:#d29922;--blu:#58a6ff;--pur:#bc8cff}
+*{box-sizing:border-box}body{background:var(--bg);color:var(--txt);
+font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;margin:0;
+padding:24px;max-width:860px;margin-inline:auto;line-height:1.6}
+.crumb{margin-bottom:14px;font-size:.9rem}.crumb a{color:var(--blu);text-decoration:none}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:18px}
+.hero h1{font-size:1.4rem;margin:0 0 6px}.meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+color:var(--mut);font-size:.9rem}
+.pill{padding:2px 10px;border-radius:999px;font-size:.8rem;border:1px solid var(--line)}
+.pill.done{color:var(--grn);border-color:var(--grn)}.pill.active{color:var(--amb);border-color:var(--amb)}
+.pill.locked{color:var(--mut)}
+article{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+article h2{font-size:1.05rem;margin:20px 0 8px;color:var(--blu)}article h2:first-child{margin-top:0}
+article p{margin:8px 0}article ul{margin:8px 0;padding-left:22px}article li{margin:4px 0}
+article a{color:var(--blu)}code{background:#21262d;padding:2px 6px;border-radius:6px;
+font-family:ui-monospace,monospace;font-size:.88em}
+pre{background:#010409;border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
+pre code{background:none;padding:0}
+.nav{display:flex;justify-content:space-between;gap:12px;margin:18px 0;flex-wrap:wrap}
+.nav-btn{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 14px;
+color:var(--txt);text-decoration:none;font-size:.9rem}.nav-btn:hover{border-color:var(--blu)}
+footer{color:var(--mut);font-size:.85rem;margin-top:16px}footer code{background:#21262d;
+padding:2px 6px;border-radius:6px}</style>
+</head>
+<body>
+<div class="crumb"><a href="../dashboard.html">← Cloud Dojo dashboard</a> · Phase 1 — First AWS Services</div>
+<div class="hero">
+<h1>Q1.1 — S3 buckets and objects</h1>
+<div class="meta"><span class="pill locked">🔒 locked</span><span>30 XP</span><span>Phase 1 — First AWS Services</span></div>
+</div>
+<article>
+<h1>Q1.1 — S3 buckets and objects (30 XP)</h1>
+<p><strong>Phase:</strong> Phase 1 — First AWS Services</p>
+<h2>Concept</h2>
+<p>S3 is object storage: buckets hold objects, and each object is a key plus bytes plus metadata. There are no real folders; keys that contain <code>/</code> only look hierarchical to your eyes.</p>
+<p>You talk to S3 with the AWS CLI pointed at the emulator&#x27;s endpoint. The full lifecycle, create a bucket, upload, list, download, and delete, uses the exact same operations whether the backend is the emulator or real AWS. Learning keys and buckets now makes every later service easier, because most of them store their data the same way.</p>
+<h2>Uses</h2>
+<ul>
+<li>Store files, images, logs, and backups durably and cheaply.</li>
+<li>Host static websites straight from a bucket.</li>
+<li>Stage data between services in a pipeline.</li>
+<li>Hold large datasets for analytics and ML training.</li>
+<li>Act as the source and destination for Lambda and ETL jobs.</li>
+</ul>
+<h2>Key info</h2>
+<ul>
+<li>Every command needs the endpoint: <code>--endpoint-url=http://localhost:4566</code>.</li>
+<li>Make a bucket: <code>aws --endpoint-url=http://localhost:4566 s3 mb s3://dojo-bucket</code>.</li>
+<li>Upload: <code>aws --endpoint-url=http://localhost:4566 s3 cp file.txt s3://dojo-bucket/</code>.</li>
+<li>List: <code>aws --endpoint-url=http://localhost:4566 s3 ls s3://dojo-bucket</code>.</li>
+<li>Download: <code>aws --endpoint-url=http://localhost:4566 s3 cp s3://dojo-bucket/file.txt .</code>.</li>
+<li>Delete one object: <code>aws --endpoint-url=http://localhost:4566 s3 rm s3://dojo-bucket/file.txt</code>.</li>
+<li>Remove the bucket itself: <code>aws --endpoint-url=http://localhost:4566 s3 rb s3://dojo-bucket</code>.</li>
+<li>Bucket names must be lowercase, globally unique, and DNS-safe.</li>
+<li><code>s3 ls</code> with no bucket lists every bucket; useful to confirm creation.</li>
+<li>S3 keys can be any UTF-8 string; <code>/</code> is just a character, not a folder.</li>
+<li><code>s3 sync</code> copies a whole directory tree, handy when you have many files.</li>
+</ul>
+<h2>Pitfalls</h2>
+<ul>
+<li>Forgetting <code>--endpoint-url</code> sends commands to real AWS, where they fail without real credentials.</li>
+<li>Uppercase letters or underscores in a bucket name are rejected; keep names lowercase and hyphenated.</li>
+<li>Listing a prefix needs the trailing slash, for example <code>s3://dojo-bucket/</code>, or the output looks wrong.</li>
+</ul>
+<h2>Done check</h2>
+<p>paste <code>aws --endpoint-url=... s3 ls s3://dojo-bucket</code> before and after delete.</p>
+<h2>Links</h2>
+<ul>
+<li>Amazon S3 user guide — https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html</li>
+<li>AWS CLI s3 commands — https://docs.aws.amazon.com/cli/latest/reference/s3/</li>
+<li>S3 API reference — https://docs.aws.amazon.com/AmazonS3/latest/API/Welcome.html</li>
+</ul>
+</article>
+<div class="nav"><span><a class="nav-btn" href="Q0.6.html">← Q0.6 👹 Boss: custom port + name</a></span><span><a class="nav-btn" href="Q1.2.html">Q1.2 SQS queues + SNS topics →</a></span></div>
+<footer>Source: <code>quests/Q1.1.md</code> · re-run <code>python3 shared/render_dashboard.py</code> after editing.</footer>
+</body>
+</html>

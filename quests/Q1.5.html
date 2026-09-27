@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Q1.5 Env vars: the universal switch — Cloud Dojo</title>
+<style>:root{--bg:#0d1117;--card:#161b22;--line:#30363d;--txt:#e6edf3;
+--mut:#8b949e;--grn:#3fb950;--amb:#d29922;--blu:#58a6ff;--pur:#bc8cff}
+*{box-sizing:border-box}body{background:var(--bg);color:var(--txt);
+font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;margin:0;
+padding:24px;max-width:860px;margin-inline:auto;line-height:1.6}
+.crumb{margin-bottom:14px;font-size:.9rem}.crumb a{color:var(--blu);text-decoration:none}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:18px}
+.hero h1{font-size:1.4rem;margin:0 0 6px}.meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+color:var(--mut);font-size:.9rem}
+.pill{padding:2px 10px;border-radius:999px;font-size:.8rem;border:1px solid var(--line)}
+.pill.done{color:var(--grn);border-color:var(--grn)}.pill.active{color:var(--amb);border-color:var(--amb)}
+.pill.locked{color:var(--mut)}
+article{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+article h2{font-size:1.05rem;margin:20px 0 8px;color:var(--blu)}article h2:first-child{margin-top:0}
+article p{margin:8px 0}article ul{margin:8px 0;padding-left:22px}article li{margin:4px 0}
+article a{color:var(--blu)}code{background:#21262d;padding:2px 6px;border-radius:6px;
+font-family:ui-monospace,monospace;font-size:.88em}
+pre{background:#010409;border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
+pre code{background:none;padding:0}
+.nav{display:flex;justify-content:space-between;gap:12px;margin:18px 0;flex-wrap:wrap}
+.nav-btn{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 14px;
+color:var(--txt);text-decoration:none;font-size:.9rem}.nav-btn:hover{border-color:var(--blu)}
+footer{color:var(--mut);font-size:.85rem;margin-top:16px}footer code{background:#21262d;
+padding:2px 6px;border-radius:6px}</style>
+</head>
+<body>
+<div class="crumb"><a href="../dashboard.html">← Cloud Dojo dashboard</a> · Phase 1 — First AWS Services</div>
+<div class="hero">
+<h1>Q1.5 — Env vars: the universal switch</h1>
+<div class="meta"><span class="pill locked">🔒 locked</span><span>15 XP</span><span>Phase 1 — First AWS Services</span></div>
+</div>
+<article>
+<h1>Q1.5 — Env vars: the universal switch (15 XP)</h1>
+<p><strong>Phase:</strong> Phase 1 — First AWS Services</p>
+<h2>Concept</h2>
+<p>Every CLI or SDK call needs three things: an endpoint, credentials, and a region. Instead of passing them on every command, you export them once as environment variables and the CLI picks them up automatically.</p>
+<p><code>AWS_ENDPOINT_URL</code> redirects all services to the emulator, so your commands read clean with no <code>--endpoint-url</code> flag. Precedence runs from explicit flags down to env vars, then config files, then defaults. This is exactly how you switch the same code between the emulator and real AWS without rewriting it.</p>
+<h2>Uses</h2>
+<ul>
+<li>Keep long CLI sessions short by exporting the endpoint once.</li>
+<li>Point the same app at the emulator in dev and real AWS in prod.</li>
+<li>Feed endpoint and credentials to SDKs without hardcoding them.</li>
+<li>Configure CI jobs that run against a local emulator.</li>
+<li>Override a single service&#x27;s endpoint without touching the others.</li>
+</ul>
+<h2>Key info</h2>
+<ul>
+<li>Export the endpoint: <code>export AWS_ENDPOINT_URL=http://localhost:4566</code>.</li>
+<li>Fake credentials: <code>export AWS_ACCESS_KEY_ID=test</code> and <code>export AWS_SECRET_ACCESS_KEY=test</code>.</li>
+<li>Region: <code>export AWS_DEFAULT_REGION=us-east-1</code>.</li>
+<li>Then a plain <code>aws s3 ls</code> hits the emulator with no endpoint flag.</li>
+<li>Per-service override exists: <code>AWS_ENDPOINT_URL_S3</code>, <code>AWS_ENDPOINT_URL_DYNAMODB</code>, and so on.</li>
+<li>Precedence order: explicit flag, then env var, then config file, then default.</li>
+<li>Inspect what&#x27;s set: <code>env | grep AWS_</code>; the values here are all fake, so nothing to redact.</li>
+<li>Use <code>unset</code> to clear a variable and fall back to the next level.</li>
+<li><code>aws configure list</code> shows which credential source the CLI is currently using.</li>
+<li><code>AWS_PROFILE</code> lets you keep an emulator profile and a real profile side by side.</li>
+<li>Re-export in every new shell, or add them to your shell startup file.</li>
+</ul>
+<h2>Pitfalls</h2>
+<ul>
+<li>Exporting in one terminal and running in another does nothing; variables don&#x27;t cross shells.</li>
+<li>Forgetting to re-export after opening a new shell means commands silently hit real AWS or fail on credentials.</li>
+<li>Real credentials leaking into a lab shell; keep fake <code>test</code>/<code>test</code> scoped to the emulator.</li>
+</ul>
+<h2>Done check</h2>
+<p>paste <code>env | grep AWS_</code> (redact nothing — all fake) + the working command.</p>
+<h2>Links</h2>
+<ul>
+<li>Environment variables for the AWS CLI — https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-envvars.html</li>
+<li>Configuring the AWS CLI — https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html</li>
+<li>Service-specific endpoints — https://docs.aws.amazon.com/sdkref/latest/guide/feature-ss-endpoints.html</li>
+</ul>
+</article>
+<div class="nav"><span><a class="nav-btn" href="Q1.4.html">← Q1.4 Volumes: survive a restart</a></span><span><a class="nav-btn" href="Q1.6.html">Q1.6 Bridge DNS: containers talking →</a></span></div>
+<footer>Source: <code>quests/Q1.5.md</code> · re-run <code>python3 shared/render_dashboard.py</code> after editing.</footer>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Q1.6 Bridge DNS: containers talking — Cloud Dojo</title>
+<style>:root{--bg:#0d1117;--card:#161b22;--line:#30363d;--txt:#e6edf3;
+--mut:#8b949e;--grn:#3fb950;--amb:#d29922;--blu:#58a6ff;--pur:#bc8cff}
+*{box-sizing:border-box}body{background:var(--bg);color:var(--txt);
+font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;margin:0;
+padding:24px;max-width:860px;margin-inline:auto;line-height:1.6}
+.crumb{margin-bottom:14px;font-size:.9rem}.crumb a{color:var(--blu);text-decoration:none}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:18px}
+.hero h1{font-size:1.4rem;margin:0 0 6px}.meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+color:var(--mut);font-size:.9rem}
+.pill{padding:2px 10px;border-radius:999px;font-size:.8rem;border:1px solid var(--line)}
+.pill.done{color:var(--grn);border-color:var(--grn)}.pill.active{color:var(--amb);border-color:var(--amb)}
+.pill.locked{color:var(--mut)}
+article{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+article h2{font-size:1.05rem;margin:20px 0 8px;color:var(--blu)}article h2:first-child{margin-top:0}
+article p{margin:8px 0}article ul{margin:8px 0;padding-left:22px}article li{margin:4px 0}
+article a{color:var(--blu)}code{background:#21262d;padding:2px 6px;border-radius:6px;
+font-family:ui-monospace,monospace;font-size:.88em}
+pre{background:#010409;border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
+pre code{background:none;padding:0}
+.nav{display:flex;justify-content:space-between;gap:12px;margin:18px 0;flex-wrap:wrap}
+.nav-btn{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 14px;
+color:var(--txt);text-decoration:none;font-size:.9rem}.nav-btn:hover{border-color:var(--blu)}
+footer{color:var(--mut);font-size:.85rem;margin-top:16px}footer code{background:#21262d;
+padding:2px 6px;border-radius:6px}</style>
+</head>
+<body>
+<div class="crumb"><a href="../dashboard.html">← Cloud Dojo dashboard</a> · Phase 1 — First AWS Services</div>
+<div class="hero">
+<h1>Q1.6 — Bridge DNS: containers talking</h1>
+<div class="meta"><span class="pill locked">🔒 locked</span><span>15 XP</span><span>Phase 1 — First AWS Services</span></div>
+</div>
+<article>
+<h1>Q1.6 — Bridge DNS: containers talking (15 XP)</h1>
+<p><strong>Phase:</strong> Phase 1 — First AWS Services</p>
+<h2>Concept</h2>
+<p>Containers on the same user-defined bridge network resolve each other by name. That means one container can reach the emulator at <code>http://emulator:4566</code> instead of an IP that changes on every restart.</p>
+<p>From your host, the same service is <code>localhost:4566</code>. This host-versus-container distinction is the single most important networking idea in the course, and it&#x27;s why Compose files use service names as hostnames. Get this right and multi-container apps stop being mysterious.</p>
+<h2>Uses</h2>
+<ul>
+<li>Connect a worker container to an emulator container by name.</li>
+<li>Run app plus database plus cache on one private network.</li>
+<li>Recreate containers freely without updating hardcoded IPs.</li>
+<li>Replicate a production service mesh on your laptop.</li>
+<li>Give each team a network name instead of memorized addresses.</li>
+</ul>
+<h2>Key info</h2>
+<ul>
+<li>Create the network: <code>docker network create dojo-net</code>.</li>
+<li>Attach the emulator: <code>docker run -d --name emulator --network dojo-net -p 4566:4566 ministackorg/ministack</code>.</li>
+<li>Start a second container on it: <code>docker run --rm -it --network dojo-net curlimages/curl sh</code>.</li>
+<li>Reach the emulator by name from inside: <code>curl http://emulator:4566/_ministack/health</code>.</li>
+<li>The name is the <code>--name</code> value, not the image name.</li>
+<li>Only containers on the same user-defined network can resolve each other.</li>
+<li>The rule to memorize: host uses <code>localhost:4566</code>, a container uses <code>&lt;name&gt;:4566</code>.</li>
+<li>A container keeps its host published port too, so the host path still works.</li>
+<li><code>docker network inspect dojo-net</code> lists which containers are attached.</li>
+<li><code>docker network connect</code> attaches an already-running container to the network.</li>
+<li>Name resolution only works on a user-defined network, never the default bridge.</li>
+</ul>
+<h2>Pitfalls</h2>
+<ul>
+<li>The default bridge network doesn&#x27;t do name resolution; always create your own network.</li>
+<li>Using <code>localhost</code> from inside a container points at that container itself, not the host.</li>
+<li>A container can&#x27;t share another&#x27;s filesystem just by joining a network; only the network is shared.</li>
+</ul>
+<h2>Done check</h2>
+<p>paste the successful <code>curl http://&lt;name&gt;:4566/_ministack/health</code> from inside the second container.</p>
+<h2>Links</h2>
+<ul>
+<li>Docker bridge networks — https://docs.docker.com/engine/network/drivers/bridge/</li>
+<li>Container networking — https://docs.docker.com/engine/network/</li>
+<li>Compose networking — https://docs.docker.com/compose/how-tos/networking/</li>
+</ul>
+</article>
+<div class="nav"><span><a class="nav-btn" href="Q1.5.html">← Q1.5 Env vars: the universal switch</a></span><span><a class="nav-btn" href="Q2.1.html">Q2.1 Stack up the emulator →</a></span></div>
+<footer>Source: <code>quests/Q1.6.md</code> · re-run <code>python3 shared/render_dashboard.py</code> after editing.</footer>
+</body>
+</html>

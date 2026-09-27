@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Q1.3 DynamoDB table + CRUD — Cloud Dojo</title>
+<style>:root{--bg:#0d1117;--card:#161b22;--line:#30363d;--txt:#e6edf3;
+--mut:#8b949e;--grn:#3fb950;--amb:#d29922;--blu:#58a6ff;--pur:#bc8cff}
+*{box-sizing:border-box}body{background:var(--bg);color:var(--txt);
+font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;margin:0;
+padding:24px;max-width:860px;margin-inline:auto;line-height:1.6}
+.crumb{margin-bottom:14px;font-size:.9rem}.crumb a{color:var(--blu);text-decoration:none}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:18px}
+.hero h1{font-size:1.4rem;margin:0 0 6px}.meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+color:var(--mut);font-size:.9rem}
+.pill{padding:2px 10px;border-radius:999px;font-size:.8rem;border:1px solid var(--line)}
+.pill.done{color:var(--grn);border-color:var(--grn)}.pill.active{color:var(--amb);border-color:var(--amb)}
+.pill.locked{color:var(--mut)}
+article{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+article h2{font-size:1.05rem;margin:20px 0 8px;color:var(--blu)}article h2:first-child{margin-top:0}
+article p{margin:8px 0}article ul{margin:8px 0;padding-left:22px}article li{margin:4px 0}
+article a{color:var(--blu)}code{background:#21262d;padding:2px 6px;border-radius:6px;
+font-family:ui-monospace,monospace;font-size:.88em}
+pre{background:#010409;border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
+pre code{background:none;padding:0}
+.nav{display:flex;justify-content:space-between;gap:12px;margin:18px 0;flex-wrap:wrap}
+.nav-btn{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 14px;
+color:var(--txt);text-decoration:none;font-size:.9rem}.nav-btn:hover{border-color:var(--blu)}
+footer{color:var(--mut);font-size:.85rem;margin-top:16px}footer code{background:#21262d;
+padding:2px 6px;border-radius:6px}</style>
+</head>
+<body>
+<div class="crumb"><a href="../dashboard.html">← Cloud Dojo dashboard</a> · Phase 1 — First AWS Services</div>
+<div class="hero">
+<h1>Q1.3 — DynamoDB table + CRUD</h1>
+<div class="meta"><span class="pill locked">🔒 locked</span><span>30 XP</span><span>Phase 1 — First AWS Services</span></div>
+</div>
+<article>
+<h1>Q1.3 — DynamoDB table + CRUD (30 XP)</h1>
+<p><strong>Phase:</strong> Phase 1 — First AWS Services</p>
+<h2>Concept</h2>
+<p>DynamoDB is a NoSQL key-value and document store. Every table needs a partition key, which decides which storage node owns each item, and can optionally have a sort key to order items inside a partition.</p>
+<p>Reads come in three shapes: <code>get-item</code> fetches one key fast, <code>query</code> reads one partition in sorted order, and <code>scan</code> reads the whole table. With <code>PAY_PER_REQUEST</code> you pay per operation instead of reserving capacity, which is ideal while learning. The CRUD cycle here is the same one every application will use.</p>
+<h2>Uses</h2>
+<ul>
+<li>Store user profiles, sessions, and shopping carts at scale.</li>
+<li>Back serverless APIs where Lambda reads and writes items.</li>
+<li>Track game state, IoT readings, or device metadata.</li>
+<li>Serve low-latency lookups without running a database server.</li>
+<li>Model flexible documents whose fields vary between items.</li>
+</ul>
+<h2>Key info</h2>
+<ul>
+<li>Create: <code>aws --endpoint-url=http://localhost:4566 dynamodb create-table --table-name Dojo --attribute-definitions AttributeName=id,AttributeType=S --key-schema AttributeName=id,KeyType=HASH --billing-mode PAY_PER_REQUEST</code>.</li>
+<li>Put: <code>dynamodb put-item --table-name Dojo --item &#x27;{&quot;id&quot;:{&quot;S&quot;:&quot;1&quot;},&quot;name&quot;:{&quot;S&quot;:&quot;ada&quot;}}&#x27;</code>.</li>
+<li>Get: <code>dynamodb get-item --table-name Dojo --key &#x27;{&quot;id&quot;:{&quot;S&quot;:&quot;1&quot;}}&#x27;</code>.</li>
+<li>Scan: <code>dynamodb scan --table-name Dojo</code>.</li>
+<li>Delete: <code>dynamodb delete-item --table-name Dojo --key &#x27;{&quot;id&quot;:{&quot;S&quot;:&quot;1&quot;}}&#x27;</code>.</li>
+<li>Attribute values are typed wrappers: <code>{&quot;S&quot;:&quot;text&quot;}</code> for string, <code>{&quot;N&quot;:&quot;42&quot;}</code> for number.</li>
+<li><code>--billing-mode PAY_PER_REQUEST</code> is the on-demand option with no capacity planning.</li>
+<li>List tables with <code>dynamodb list-tables</code> to confirm creation.</li>
+<li>A sort key, when present, is added with a second <code>KeyType=RANGE</code> entry.</li>
+<li><code>dynamodb describe-table --table-name Dojo</code> shows the key schema after creation.</li>
+<li><code>--return-consumed-capacity</code> reports how much capacity each call used.</li>
+</ul>
+<h2>Pitfalls</h2>
+<ul>
+<li>Mixing up attribute types, like passing <code>{&quot;N&quot;:...}</code> where a string is expected, fails the write.</li>
+<li>Using <code>scan</code> in production; it reads the entire table and gets expensive fast.</li>
+<li>Picking a low-cardinality partition key concentrates all traffic on one node and throttles.</li>
+</ul>
+<h2>Done check</h2>
+<p>paste the <code>get-item</code> output showing your item.</p>
+<h2>Links</h2>
+<ul>
+<li>DynamoDB core components — https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.CoreComponents.html</li>
+<li>AWS CLI dynamodb commands — https://docs.aws.amazon.com/cli/latest/reference/dynamodb/</li>
+<li>DynamoDB getting started — https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/GettingStartedDynamoDB.html</li>
+</ul>
+</article>
+<div class="nav"><span><a class="nav-btn" href="Q1.2.html">← Q1.2 SQS queues + SNS topics</a></span><span><a class="nav-btn" href="Q1.4.html">Q1.4 Volumes: survive a restart →</a></span></div>
+<footer>Source: <code>quests/Q1.3.md</code> · re-run <code>python3 shared/render_dashboard.py</code> after editing.</footer>
+</body>
+</html>
