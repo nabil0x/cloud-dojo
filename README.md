@@ -6,6 +6,7 @@
 [![57 quests](https://img.shields.io/badge/quests-57-blue)](ROADMAP.md)
 [![Pages](https://github.com/nabil0x/cloud-dojo/actions/workflows/pages.yml/badge.svg)](https://nabil0x.github.io/cloud-dojo/)
 [![Live demo](https://img.shields.io/badge/demo-live-brightgreen)](https://nabil0x.github.io/cloud-dojo/)
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/nabil0x/cloud-dojo)
 
 **Learn Docker from scratch and AWS basics by running AWS locally — free, no AWS account needed.** A gamified, quest-based DevOps tutorial: 8 phases + a real-AWS track covering S3, EC2, Lambda, DynamoDB, SQS, VPC, RDS, Terraform, CI/CD with GitHub Actions and ECS, plus Bedrock and SageMaker for AI engineers — practiced hands-on with local AWS emulators (MiniStack, LocalStack, Moto).
 
@@ -37,6 +38,11 @@ Docker (images, volumes, networks, Compose) → AWS core (IAM, S3, EC2, VPC, RDS
 - 🗺️ [Architecture maps](docs/architecture.md) — journey, stack, and capstone diagrams
 - 📚 [Curated resources](RESOURCES.md) — sandboxes, docs, courses, communities
 - 📋 Cheatsheets: [Docker](cheatsheets/docker.md) · [AWS CLI](cheatsheets/aws-cli.md) · [Terraform](cheatsheets/terraform.md) · [GitHub Actions](cheatsheets/github-actions.md)
+- ✅ Self-checks: [assessments/](assessments/) — 10 questions per phase, answers hidden (no XP, honor system)
+- 🗺️ [Curriculum matrix](CURRICULUM.md) — objectives, prerequisites, time per phase
+- 🃏 [Flashcards](flashcards/REVIEW.md) — Anki deck built from the glossary
+- 🏆 [Showcase](SHOWCASE.md) — learner capstone builds (certificate via `shared/render_certificate.py`)
+- 📝 [Changelog](CHANGELOG.md) — what changed, per release
 
 ## Start here
 1. Read `GAME-RULES.md` (2 min) — XP, levels, badges.
@@ -66,9 +72,8 @@ It's generated from `shared/progress.json`: update that file, then re-run
 `python3 shared/render_dashboard.py` to refresh.
 
 ## Prerequisites (install before Phase 0)
-- Docker (Desktop on Mac/Windows, Engine on Linux)
-- AWS CLI v2 (`aws --version`)
-- `curl`
+- **Zero install:** click **Open in GitHub Codespaces** above — Docker, AWS CLI, Terraform arrive preinstalled (remember to stop it when done; free tier = 60 hrs/month on 2 cores)
+- **Local:** Docker (Desktop on Mac/Windows, Engine on Linux) + AWS CLI v2 (`aws --version`) + `curl`
 
 ## Playground health check
 ```bash
