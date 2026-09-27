@@ -2,6 +2,12 @@
 
 Learn Docker by running AWS itself — locally, free, no AWS account needed.
 
+![Cloud Dojo journey dashboard](docs/images/dashboard.png)
+
+*Track 1600 XP across 8 phases on the dashboard — every quest title opens a concept page like this:*
+
+![Quest concept page](docs/images/quest-page.png)
+
 ## Start here
 1. Read `GAME-RULES.md` (2 min) — XP, levels, badges.
 2. Read `ROADMAP.md` (5 min) — all 4 phases + the parallel IAM track.
