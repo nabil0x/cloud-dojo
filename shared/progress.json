@@ -1,0 +1,449 @@
+{
+  "xp": 0,
+  "total_xp": 1600,
+  "badges": [],
+  "phases": [
+    {
+      "id": "phase-00",
+      "name": "Phase 0 — Docker Foundations",
+      "badge": "🐳 Container Cadet",
+      "badge_xp": 100,
+      "status": "active",
+      "quests": [
+        {
+          "id": "Q0.1",
+          "title": "Hello, Docker",
+          "xp": 10,
+          "status": "in_progress"
+        },
+        {
+          "id": "Q0.2",
+          "title": "Run the emulator",
+          "xp": 15,
+          "status": "locked"
+        },
+        {
+          "id": "Q0.3",
+          "title": "Lifecycle: ports, logs, stop/rm",
+          "xp": 15,
+          "status": "locked"
+        },
+        {
+          "id": "Q0.4",
+          "title": "Your first Dockerfile",
+          "xp": 20,
+          "status": "locked"
+        },
+        {
+          "id": "Q0.5",
+          "title": "Layers and cache",
+          "xp": 20,
+          "status": "locked"
+        },
+        {
+          "id": "Q0.6",
+          "title": "👹 Boss: custom port + name",
+          "xp": 20,
+          "status": "locked"
+        }
+      ]
+    },
+    {
+      "id": "phase-01",
+      "name": "Phase 1 — First AWS Services",
+      "badge": "🪣 Bucket Builder",
+      "badge_xp": 150,
+      "status": "locked",
+      "quests": [
+        {
+          "id": "Q1.1",
+          "title": "S3 buckets and objects",
+          "xp": 30,
+          "status": "locked"
+        },
+        {
+          "id": "Q1.2",
+          "title": "SQS queues + SNS topics",
+          "xp": 30,
+          "status": "locked"
+        },
+        {
+          "id": "Q1.3",
+          "title": "DynamoDB table + CRUD",
+          "xp": 30,
+          "status": "locked"
+        },
+        {
+          "id": "Q1.4",
+          "title": "Volumes: survive a restart",
+          "xp": 30,
+          "status": "locked"
+        },
+        {
+          "id": "Q1.5",
+          "title": "Env vars: the universal switch",
+          "xp": 15,
+          "status": "locked"
+        },
+        {
+          "id": "Q1.6",
+          "title": "Bridge DNS: containers talking",
+          "xp": 15,
+          "status": "locked"
+        }
+      ]
+    },
+    {
+      "id": "phase-02",
+      "name": "Phase 2 — Compose Capstone",
+      "badge": "🧩 Compose Commander",
+      "badge_xp": 150,
+      "status": "locked",
+      "quests": [
+        {
+          "id": "Q2.1",
+          "title": "Stack up the emulator",
+          "xp": 30,
+          "status": "locked"
+        },
+        {
+          "id": "Q2.2",
+          "title": "Add the app service",
+          "xp": 40,
+          "status": "locked"
+        },
+        {
+          "id": "Q2.3",
+          "title": "The DNS lesson",
+          "xp": 30,
+          "status": "locked"
+        },
+        {
+          "id": "Q2.4",
+          "title": "Seed on demand",
+          "xp": 25,
+          "status": "locked"
+        },
+        {
+          "id": "Q2.5",
+          "title": "👹 Boss: full rebuild loop",
+          "xp": 25,
+          "status": "locked"
+        }
+      ]
+    },
+    {
+      "id": "phase-03",
+      "name": "Phase 3 — Lambda Container Images",
+      "badge": "⚡ Lambda Launcher",
+      "badge_xp": 150,
+      "status": "locked",
+      "quests": [
+        {
+          "id": "Q3.1",
+          "title": "Build a Lambda image",
+          "xp": 40,
+          "status": "locked"
+        },
+        {
+          "id": "Q3.2",
+          "title": "Push to the local ECR",
+          "xp": 40,
+          "status": "locked"
+        },
+        {
+          "id": "Q3.3",
+          "title": "Create + invoke",
+          "xp": 40,
+          "status": "locked"
+        },
+        {
+          "id": "Q3.4",
+          "title": "Wire an event trigger",
+          "xp": 30,
+          "status": "locked"
+        }
+      ]
+    },
+    {
+      "id": "phase-04",
+      "name": "Phase 4 — EC2 + VPC + RDS",
+      "badge": "🏗️ Cloud Architect",
+      "badge_xp": 150,
+      "status": "locked",
+      "quests": [
+        {
+          "id": "Q4.1",
+          "title": "VPC anatomy",
+          "xp": 30,
+          "status": "locked"
+        },
+        {
+          "id": "Q4.2",
+          "title": "Launch EC2 + security groups",
+          "xp": 40,
+          "status": "locked"
+        },
+        {
+          "id": "Q4.3",
+          "title": "AMIs, EBS, stop/start billing",
+          "xp": 25,
+          "status": "locked"
+        },
+        {
+          "id": "Q4.4",
+          "title": "RDS Postgres, scoped access",
+          "xp": 30,
+          "status": "locked"
+        },
+        {
+          "id": "Q4.5",
+          "title": "👹 Boss: nuke it + $0 proof",
+          "xp": 25,
+          "status": "locked"
+        }
+      ]
+    },
+    {
+      "id": "phase-05",
+      "name": "Phase 5 — Bedrock + SageMaker",
+      "badge": "🤖 Model Wrangler",
+      "badge_xp": 150,
+      "status": "locked",
+      "quests": [
+        {
+          "id": "Q5.1",
+          "title": "First model call",
+          "xp": 30,
+          "status": "locked"
+        },
+        {
+          "id": "Q5.2",
+          "title": "Ground it with your data",
+          "xp": 35,
+          "status": "locked"
+        },
+        {
+          "id": "Q5.3",
+          "title": "SageMaker training run",
+          "xp": 35,
+          "status": "locked"
+        },
+        {
+          "id": "Q5.4",
+          "title": "Deploy endpoint, then kill it",
+          "xp": 25,
+          "status": "locked"
+        },
+        {
+          "id": "Q5.5",
+          "title": "👹 Boss: $0 audit",
+          "xp": 25,
+          "status": "locked"
+        }
+      ]
+    },
+    {
+      "id": "phase-06",
+      "name": "Phase 6 — Terraform IaC",
+      "badge": "🧱 Stack Builder",
+      "badge_xp": 150,
+      "status": "locked",
+      "quests": [
+        {
+          "id": "Q6.1",
+          "title": "First config: provider + bucket",
+          "xp": 30,
+          "status": "locked"
+        },
+        {
+          "id": "Q6.2",
+          "title": "Variables + outputs",
+          "xp": 25,
+          "status": "locked"
+        },
+        {
+          "id": "Q6.3",
+          "title": "State: list, show, import",
+          "xp": 30,
+          "status": "locked"
+        },
+        {
+          "id": "Q6.4",
+          "title": "Multi-resource apply",
+          "xp": 35,
+          "status": "locked"
+        },
+        {
+          "id": "Q6.5",
+          "title": "👹 Boss: destroy + clean proof",
+          "xp": 30,
+          "status": "locked"
+        }
+      ]
+    },
+    {
+      "id": "phase-07",
+      "name": "Phase 7 — CI/CD + ECS",
+      "badge": "🚀 Release Runner",
+      "badge_xp": 150,
+      "status": "locked",
+      "quests": [
+        {
+          "id": "Q7.1",
+          "title": "Prod-ready image + ECR",
+          "xp": 25,
+          "status": "locked"
+        },
+        {
+          "id": "Q7.2",
+          "title": "Pipeline: build + test, red then green",
+          "xp": 35,
+          "status": "locked"
+        },
+        {
+          "id": "Q7.3",
+          "title": "Pipeline pushes to ECR by SHA",
+          "xp": 30,
+          "status": "locked"
+        },
+        {
+          "id": "Q7.4",
+          "title": "Fargate service, live",
+          "xp": 35,
+          "status": "locked"
+        },
+        {
+          "id": "Q7.5",
+          "title": "👹 Boss: push-to-deploy + teardown",
+          "xp": 25,
+          "status": "locked"
+        }
+      ]
+    },
+    {
+      "id": "phase-08",
+      "name": "Phase 8 — RAG Capstone",
+      "badge": "🏆 Grandmaster",
+      "badge_xp": 200,
+      "status": "locked",
+      "quests": [
+        {
+          "id": "Q8.1",
+          "title": "Design doc + cost estimate",
+          "xp": 30,
+          "status": "locked"
+        },
+        {
+          "id": "Q8.2",
+          "title": "Data + retrieval, 5-question eval",
+          "xp": 40,
+          "status": "locked"
+        },
+        {
+          "id": "Q8.3",
+          "title": "Hardened API: auth, throttle, CORS",
+          "xp": 40,
+          "status": "locked"
+        },
+        {
+          "id": "Q8.4",
+          "title": "Everything in Terraform via pipeline",
+          "xp": 50,
+          "status": "locked"
+        },
+        {
+          "id": "Q8.5",
+          "title": "👹 Boss: demo + demolish + retro",
+          "xp": 40,
+          "status": "locked"
+        }
+      ]
+    },
+    {
+      "id": "module-m",
+      "name": "Module M — Moto Testing",
+      "badge": "🧪 Test Pilot",
+      "badge_xp": 50,
+      "status": "locked",
+      "quests": [
+        {
+          "id": "M.1",
+          "title": "First mocked test",
+          "xp": 15,
+          "status": "locked"
+        },
+        {
+          "id": "M.2",
+          "title": "Fixtures: DynamoDB + SQS",
+          "xp": 20,
+          "status": "locked"
+        },
+        {
+          "id": "M.3",
+          "title": "👹 Boss: server mode",
+          "xp": 15,
+          "status": "locked"
+        }
+      ]
+    },
+    {
+      "id": "track-t",
+      "name": "Track T — Real-AWS Parallel Track",
+      "badge": "🛡️ IAM Initiate + 🔐 Vault Keeper",
+      "badge_xp": 200,
+      "status": "locked",
+      "quests": [
+        {
+          "id": "T.1",
+          "title": "Claim your sandbox",
+          "xp": 20,
+          "status": "locked"
+        },
+        {
+          "id": "T.2",
+          "title": "IAM users, groups, policies",
+          "xp": 30,
+          "status": "locked"
+        },
+        {
+          "id": "T.3",
+          "title": "Least privilege + MFA",
+          "xp": 25,
+          "status": "locked"
+        },
+        {
+          "id": "T.4",
+          "title": "Budgets and alarms",
+          "xp": 25,
+          "status": "locked"
+        },
+        {
+          "id": "T.5",
+          "title": "Secrets Manager: no hardcoded keys",
+          "xp": 25,
+          "status": "locked"
+        },
+        {
+          "id": "T.6",
+          "title": "KMS + SSM Parameter Store",
+          "xp": 25,
+          "status": "locked"
+        },
+        {
+          "id": "T.7",
+          "title": "CloudWatch observability",
+          "xp": 25,
+          "status": "locked"
+        },
+        {
+          "id": "T.8",
+          "title": "API Gateway authorizer",
+          "xp": 25,
+          "status": "locked"
+        }
+      ]
+    }
+  ],
+  "log": []
+}
