@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Q4.4 RDS Postgres, scoped access — Cloud Dojo</title>
+<style>:root{--bg:#0d1117;--card:#161b22;--line:#30363d;--txt:#e6edf3;
+--mut:#8b949e;--grn:#3fb950;--amb:#d29922;--blu:#58a6ff;--pur:#bc8cff}
+*{box-sizing:border-box}body{background:var(--bg);color:var(--txt);
+font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;margin:0;
+padding:24px;max-width:860px;margin-inline:auto;line-height:1.6}
+.crumb{margin-bottom:14px;font-size:.9rem}.crumb a{color:var(--blu);text-decoration:none}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:18px}
+.hero h1{font-size:1.4rem;margin:0 0 6px}.meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+color:var(--mut);font-size:.9rem}
+.pill{padding:2px 10px;border-radius:999px;font-size:.8rem;border:1px solid var(--line)}
+.pill.done{color:var(--grn);border-color:var(--grn)}.pill.active{color:var(--amb);border-color:var(--amb)}
+.pill.locked{color:var(--mut)}
+article{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+article h2{font-size:1.05rem;margin:20px 0 8px;color:var(--blu)}article h2:first-child{margin-top:0}
+article p{margin:8px 0}article ul{margin:8px 0;padding-left:22px}article li{margin:4px 0}
+article a{color:var(--blu)}code{background:#21262d;padding:2px 6px;border-radius:6px;
+font-family:ui-monospace,monospace;font-size:.88em}
+pre{background:#010409;border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
+pre code{background:none;padding:0}
+.nav{display:flex;justify-content:space-between;gap:12px;margin:18px 0;flex-wrap:wrap}
+.nav-btn{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 14px;
+color:var(--txt);text-decoration:none;font-size:.9rem}.nav-btn:hover{border-color:var(--blu)}
+footer{color:var(--mut);font-size:.85rem;margin-top:16px}footer code{background:#21262d;
+padding:2px 6px;border-radius:6px}</style>
+</head>
+<body>
+<div class="crumb"><a href="../dashboard.html">← Cloud Dojo dashboard</a> · Phase 4 — EC2 + VPC + RDS</div>
+<div class="hero">
+<h1>Q4.4 — RDS Postgres, scoped access</h1>
+<div class="meta"><span class="pill locked">🔒 locked</span><span>30 XP</span><span>Phase 4 — EC2 + VPC + RDS</span></div>
+</div>
+<article>
+<h1>Q4.4 — RDS Postgres, scoped access (30 XP)</h1>
+<p><strong>Phase:</strong> Phase 4 — EC2 + VPC + RDS</p>
+<h2>Concept</h2>
+<p>RDS (Relational Database Service) runs Postgres (or MySQL, and others) for you: patching, backups, snapshots, and optional Multi-AZ failover are managed. You still own instance sizing, storage growth, credential rotation, and, critically, network access.</p>
+<p>A database should never be publicly accessible. The safe pattern is to put it in a private subnet and let only your application reach it. Access control between AWS resources is done with security-group references, not IP addresses.</p>
+<p>The RDS security group allows inbound <code>5432</code> from the EC2 instance&#x27;s security group. That SG-to-SG rule means &quot;only machines wearing this badge may connect,&quot; and it keeps working even as instance IPs change. Never open a database port to <code>0.0.0.0/0</code>.</p>
+<p>This quest uses a real <code>db.t3.micro</code>, which bills per hour while it exists, so it must be deleted before you move on. Skip the final snapshot for practice data.</p>
+<h2>Uses</h2>
+<ul>
+<li>Back a web app or API with managed Postgres and automated backups.</li>
+<li>Store structured data (users, orders, events) without running your own database server.</li>
+<li>Enforce least-privilege networking: app tier talks to DB, nothing else can.</li>
+<li>Practice the SG-to-SG pattern that recurs in every AWS architecture you&#x27;ll build.</li>
+<li>Test schema migrations and queries against a production-like engine.</li>
+</ul>
+<h2>Key info</h2>
+<ul>
+<li>Free-tier eligible: <code>db.t3.micro</code>, 20 GB storage (verify current terms in your sandbox).</li>
+<li>Set <strong>Public access = No</strong> and place it in a private or default-VPC subnet.</li>
+<li>RDS security group inbound rule: type PostgreSQL, port <code>5432</code>, source = the <strong>EC2 security group ID</strong> (e.g. <code>sg-0abc...</code>), never a CIDR like <code>0.0.0.0/0</code>.</li>
+<li>Connect from the EC2 box: <code>psql -h &lt;rds-endpoint&gt; -U &lt;user&gt; -d &lt;dbname&gt;</code>.</li>
+<li>Then: <code>CREATE TABLE notes (id serial primary key, body text);</code> and <code>INSERT INTO notes (body) VALUES (&#x27;hello&#x27;);</code>.</li>
+<li>Verify: <code>SELECT * FROM notes;</code> and paste the output.</li>
+<li>Billing: RDS bills per instance-hour while it exists (even idle) plus storage. Delete the instance when done.</li>
+</ul>
+<h2>Pitfalls</h2>
+<ul>
+<li>Marking the database publicly accessible or allowing <code>0.0.0.0/0</code> on port 5432.</li>
+<li>Referencing an IP instead of the EC2 security group, so connections break when the IP changes.</li>
+<li>Forgetting the RDS security group must allow the app&#x27;s SG on the DB port; this is the classic &quot;app can&#x27;t reach DB&quot; outage.</li>
+</ul>
+<h2>Done check</h2>
+<p>Paste the <code>SELECT</code> output + the RDS SG inbound rules.</p>
+<h2>Links</h2>
+<ul>
+<li>RDS Postgres getting started — https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_GettingStarted.CreatingConnecting.PostgreSQL.html</li>
+<li>Security group rules — https://docs.aws.amazon.com/vpc/latest/userguide/security-group-rules.html</li>
+<li>RDS security — https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/UsingWithRDS.html</li>
+</ul>
+</article>
+<div class="nav"><span><a class="nav-btn" href="Q4.3.html">← Q4.3 AMIs, EBS, stop/start billing</a></span><span><a class="nav-btn" href="Q4.5.html">Q4.5 👹 Boss: nuke it + $0 proof →</a></span></div>
+<footer>Source: <code>quests/Q4.4.md</code> · re-run <code>python3 shared/render_dashboard.py</code> after editing.</footer>
+</body>
+</html>

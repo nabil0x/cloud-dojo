@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Q4.2 Launch EC2 + security groups — Cloud Dojo</title>
+<style>:root{--bg:#0d1117;--card:#161b22;--line:#30363d;--txt:#e6edf3;
+--mut:#8b949e;--grn:#3fb950;--amb:#d29922;--blu:#58a6ff;--pur:#bc8cff}
+*{box-sizing:border-box}body{background:var(--bg);color:var(--txt);
+font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;margin:0;
+padding:24px;max-width:860px;margin-inline:auto;line-height:1.6}
+.crumb{margin-bottom:14px;font-size:.9rem}.crumb a{color:var(--blu);text-decoration:none}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:18px}
+.hero h1{font-size:1.4rem;margin:0 0 6px}.meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+color:var(--mut);font-size:.9rem}
+.pill{padding:2px 10px;border-radius:999px;font-size:.8rem;border:1px solid var(--line)}
+.pill.done{color:var(--grn);border-color:var(--grn)}.pill.active{color:var(--amb);border-color:var(--amb)}
+.pill.locked{color:var(--mut)}
+article{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+article h2{font-size:1.05rem;margin:20px 0 8px;color:var(--blu)}article h2:first-child{margin-top:0}
+article p{margin:8px 0}article ul{margin:8px 0;padding-left:22px}article li{margin:4px 0}
+article a{color:var(--blu)}code{background:#21262d;padding:2px 6px;border-radius:6px;
+font-family:ui-monospace,monospace;font-size:.88em}
+pre{background:#010409;border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
+pre code{background:none;padding:0}
+.nav{display:flex;justify-content:space-between;gap:12px;margin:18px 0;flex-wrap:wrap}
+.nav-btn{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 14px;
+color:var(--txt);text-decoration:none;font-size:.9rem}.nav-btn:hover{border-color:var(--blu)}
+footer{color:var(--mut);font-size:.85rem;margin-top:16px}footer code{background:#21262d;
+padding:2px 6px;border-radius:6px}</style>
+</head>
+<body>
+<div class="crumb"><a href="../dashboard.html">← Cloud Dojo dashboard</a> · Phase 4 — EC2 + VPC + RDS</div>
+<div class="hero">
+<h1>Q4.2 — Launch EC2 + security groups</h1>
+<div class="meta"><span class="pill locked">🔒 locked</span><span>40 XP</span><span>Phase 4 — EC2 + VPC + RDS</span></div>
+</div>
+<article>
+<h1>Q4.2 — Launch EC2 + security groups (40 XP)</h1>
+<p><strong>Phase:</strong> Phase 4 — EC2 + VPC + RDS</p>
+<h2>Concept</h2>
+<p>EC2 (Elastic Compute Cloud) is renting a virtual machine by the second. You pick an AMI (the OS image), an instance type (the hardware), a key pair (for SSH), and a security group (the firewall). A <code>t3.micro</code> is burstable and free-tier eligible, which makes it the standard learning box.</p>
+<p>The security group is where beginners get burned. It&#x27;s stateful, so return traffic is automatic, but every inbound rule must be explicit. Opening SSH to <code>0.0.0.0/0</code> means the entire internet can try to brute-force your box within minutes of launch.</p>
+<p>Scoping port 22 to your own IP is the correct habit from day one. User data then lets you bootstrap software at first boot, so you can install a web server and serve a page without logging in by hand.</p>
+<p>This quest runs against a real sandbox instance, so it bills while running and must be stopped or terminated when you&#x27;re done. The rule for the phase holds: if you sleep, it sleeps terminated.</p>
+<h2>Uses</h2>
+<ul>
+<li>Host a small web server or API endpoint for testing without a managed platform.</li>
+<li>Run bootstrap scripts (user data) to configure software automatically at first boot.</li>
+<li>Use as a jump host or bastion to reach private resources like an RDS database.</li>
+<li>Reproduce production-like networking and firewall behavior in a safe lab.</li>
+<li>Learn the exact launch flow you&#x27;ll later automate with Terraform or CloudFormation.</li>
+</ul>
+<h2>Key info</h2>
+<ul>
+<li>Free-tier eligible: <code>t3.micro</code> (or <code>t2.micro</code> in some regions); verify current terms in your sandbox.</li>
+<li>Key pair: <code>.pem</code> file, <code>chmod 400</code> it, then <code>ssh -i key.pem ec2-user@&lt;public-ip&gt;</code>.</li>
+<li>User data runs once at first boot as root: start with <code>#!/bin/bash</code>, then <code>yum install -y httpd &amp;&amp; systemctl start httpd</code>.</li>
+<li>Security group rules: SSH <code>22</code> from <strong>your IP only</strong> (find it via <code>curl ifconfig.me</code>); HTTP <code>80</code> open to <code>0.0.0.0/0</code>.</li>
+<li>Find and test: <code>aws ec2 describe-instances</code>, then <code>curl http://&lt;public-ip&gt;</code>.</li>
+<li>Billing: a running EC2 bills per second; a stopped instance still bills for its EBS volume.</li>
+<li>Terminate the instance once the quest is verified, and confirm the state is <code>terminated</code>.</li>
+</ul>
+<h2>Pitfalls</h2>
+<ul>
+<li>Opening SSH to <code>0.0.0.0/0</code>; scope it to your IP and update the rule when your IP changes.</li>
+<li>Losing the private key or using the wrong user (<code>ec2-user</code> for Amazon Linux, <code>ubuntu</code> for Ubuntu).</li>
+<li>Forgetting a stopped instance may get a new public IP on restart, breaking bookmarked addresses.</li>
+</ul>
+<h2>Done check</h2>
+<p>Paste the <code>curl</code> of your instance&#x27;s public IP returning your page + the SG inbound rules.</p>
+<h2>Links</h2>
+<ul>
+<li>EC2 getting started — https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2_GetStarted.html</li>
+<li>Security groups — https://docs.aws.amazon.com/vpc/latest/userguide/vpc-security-groups.html</li>
+<li>User data — https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html</li>
+</ul>
+</article>
+<div class="nav"><span><a class="nav-btn" href="Q4.1.html">← Q4.1 VPC anatomy</a></span><span><a class="nav-btn" href="Q4.3.html">Q4.3 AMIs, EBS, stop/start billing →</a></span></div>
+<footer>Source: <code>quests/Q4.2.md</code> · re-run <code>python3 shared/render_dashboard.py</code> after editing.</footer>
+</body>
+</html>

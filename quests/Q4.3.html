@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Q4.3 AMIs, EBS, stop/start billing — Cloud Dojo</title>
+<style>:root{--bg:#0d1117;--card:#161b22;--line:#30363d;--txt:#e6edf3;
+--mut:#8b949e;--grn:#3fb950;--amb:#d29922;--blu:#58a6ff;--pur:#bc8cff}
+*{box-sizing:border-box}body{background:var(--bg);color:var(--txt);
+font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;margin:0;
+padding:24px;max-width:860px;margin-inline:auto;line-height:1.6}
+.crumb{margin-bottom:14px;font-size:.9rem}.crumb a{color:var(--blu);text-decoration:none}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:18px}
+.hero h1{font-size:1.4rem;margin:0 0 6px}.meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+color:var(--mut);font-size:.9rem}
+.pill{padding:2px 10px;border-radius:999px;font-size:.8rem;border:1px solid var(--line)}
+.pill.done{color:var(--grn);border-color:var(--grn)}.pill.active{color:var(--amb);border-color:var(--amb)}
+.pill.locked{color:var(--mut)}
+article{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+article h2{font-size:1.05rem;margin:20px 0 8px;color:var(--blu)}article h2:first-child{margin-top:0}
+article p{margin:8px 0}article ul{margin:8px 0;padding-left:22px}article li{margin:4px 0}
+article a{color:var(--blu)}code{background:#21262d;padding:2px 6px;border-radius:6px;
+font-family:ui-monospace,monospace;font-size:.88em}
+pre{background:#010409;border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
+pre code{background:none;padding:0}
+.nav{display:flex;justify-content:space-between;gap:12px;margin:18px 0;flex-wrap:wrap}
+.nav-btn{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 14px;
+color:var(--txt);text-decoration:none;font-size:.9rem}.nav-btn:hover{border-color:var(--blu)}
+footer{color:var(--mut);font-size:.85rem;margin-top:16px}footer code{background:#21262d;
+padding:2px 6px;border-radius:6px}</style>
+</head>
+<body>
+<div class="crumb"><a href="../dashboard.html">← Cloud Dojo dashboard</a> · Phase 4 — EC2 + VPC + RDS</div>
+<div class="hero">
+<h1>Q4.3 — AMIs, EBS, stop/start billing</h1>
+<div class="meta"><span class="pill locked">🔒 locked</span><span>25 XP</span><span>Phase 4 — EC2 + VPC + RDS</span></div>
+</div>
+<article>
+<h1>Q4.3 — AMIs, EBS, stop/start billing lesson (25 XP)</h1>
+<p><strong>Phase:</strong> Phase 4 — EC2 + VPC + RDS</p>
+<h2>Concept</h2>
+<p>An AMI (Amazon Machine Image) is a snapshot template: an OS plus whatever software you installed. Launch from it and you get an identical machine, which is how reproducible infrastructure starts. Bake a golden image once, then clone it on demand.</p>
+<p>EBS (Elastic Block Store) is the network disk attached to your instance, and it survives independently of the instance. That independence is the whole billing lesson: when you stop an instance, compute charges pause but the EBS volume keeps existing and keeps billing.</p>
+<p>Terminating the instance can delete the volume only if that flag is set; otherwise it lingers as an unattached volume, quietly costing money. Snapshots behind an AMI cost storage too, and nobody sees them in the instance list.</p>
+<p>This quest makes you feel the distinction by stopping, imaging, terminating, and re-launching. Real sandbox rules apply, so the original must be terminated after the clone works and any leftover volume or snapshot deleted.</p>
+<h2>Uses</h2>
+<ul>
+<li>Bake a golden AMI once (patched OS + your app) and launch identical clones on demand.</li>
+<li>Scale out: launch N instances from one AMI behind a load balancer.</li>
+<li>Recover a machine by launching a fresh instance from an image of a known-good state.</li>
+<li>Move a configured instance across AZs by imaging it and relaunching elsewhere.</li>
+<li>Understand why &quot;I stopped it, why am I still billed?&quot; is the most common first cloud bill surprise.</li>
+</ul>
+<h2>Key info</h2>
+<ul>
+<li>Stop = compute off, EBS still billed. Terminate = compute gone, root volume deleted by default (data volumes may persist).</li>
+<li>Create an AMI: <code>aws ec2 create-image --instance-id &lt;id&gt; --name my-image --no-reboot</code> (or console: Instance state → Image and templates → Create image).</li>
+<li>Launch the clone from the AMI: <code>aws ec2 run-instances --image-id &lt;ami-id&gt; ...</code>.</li>
+<li>Track it: <code>aws ec2 describe-images --owners self</code>, <code>aws ec2 describe-volumes</code>.</li>
+<li>Still billed while stopped: the EBS volume (per GB-month). Snapshots also bill per GB-month.</li>
+<li>Deregister unused AMIs and delete their snapshots when you&#x27;re done, or they bill forever.</li>
+<li>The original must be terminated after the clone is confirmed, and leftover volumes or snapshots deleted.</li>
+</ul>
+<h2>Pitfalls</h2>
+<ul>
+<li>Assuming &quot;stopped&quot; means &quot;not billed&quot;; EBS, Elastic IPs, and snapshots all survive a stop and bill.</li>
+<li>Creating an AMI but never deleting the snapshots behind it; images and their snapshots cost storage.</li>
+<li>Leaving the original instance running after the clone works, doubling compute spend.</li>
+</ul>
+<h2>Done check</h2>
+<p>Paste <code>describe-instances</code> showing the clone running + one sentence on what still bills while stopped.</p>
+<h2>Links</h2>
+<ul>
+<li>AMIs — https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AMIs.html</li>
+<li>EBS volumes — https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AmazonEBS.html</li>
+<li>Stopping and starting — https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Stop_Start.html</li>
+</ul>
+</article>
+<div class="nav"><span><a class="nav-btn" href="Q4.2.html">← Q4.2 Launch EC2 + security groups</a></span><span><a class="nav-btn" href="Q4.4.html">Q4.4 RDS Postgres, scoped access →</a></span></div>
+<footer>Source: <code>quests/Q4.3.md</code> · re-run <code>python3 shared/render_dashboard.py</code> after editing.</footer>
+</body>
+</html>

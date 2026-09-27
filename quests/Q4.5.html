@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Q4.5 👹 Boss: nuke it + $0 proof — Cloud Dojo</title>
+<style>:root{--bg:#0d1117;--card:#161b22;--line:#30363d;--txt:#e6edf3;
+--mut:#8b949e;--grn:#3fb950;--amb:#d29922;--blu:#58a6ff;--pur:#bc8cff}
+*{box-sizing:border-box}body{background:var(--bg);color:var(--txt);
+font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;margin:0;
+padding:24px;max-width:860px;margin-inline:auto;line-height:1.6}
+.crumb{margin-bottom:14px;font-size:.9rem}.crumb a{color:var(--blu);text-decoration:none}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:18px}
+.hero h1{font-size:1.4rem;margin:0 0 6px}.meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+color:var(--mut);font-size:.9rem}
+.pill{padding:2px 10px;border-radius:999px;font-size:.8rem;border:1px solid var(--line)}
+.pill.done{color:var(--grn);border-color:var(--grn)}.pill.active{color:var(--amb);border-color:var(--amb)}
+.pill.locked{color:var(--mut)}
+article{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+article h2{font-size:1.05rem;margin:20px 0 8px;color:var(--blu)}article h2:first-child{margin-top:0}
+article p{margin:8px 0}article ul{margin:8px 0;padding-left:22px}article li{margin:4px 0}
+article a{color:var(--blu)}code{background:#21262d;padding:2px 6px;border-radius:6px;
+font-family:ui-monospace,monospace;font-size:.88em}
+pre{background:#010409;border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
+pre code{background:none;padding:0}
+.nav{display:flex;justify-content:space-between;gap:12px;margin:18px 0;flex-wrap:wrap}
+.nav-btn{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 14px;
+color:var(--txt);text-decoration:none;font-size:.9rem}.nav-btn:hover{border-color:var(--blu)}
+footer{color:var(--mut);font-size:.85rem;margin-top:16px}footer code{background:#21262d;
+padding:2px 6px;border-radius:6px}</style>
+</head>
+<body>
+<div class="crumb"><a href="../dashboard.html">← Cloud Dojo dashboard</a> · Phase 4 — EC2 + VPC + RDS</div>
+<div class="hero">
+<h1>Q4.5 — 👹 Boss: nuke it + $0 proof</h1>
+<div class="meta"><span class="pill locked">🔒 locked</span><span>25 XP</span><span>Phase 4 — EC2 + VPC + RDS</span></div>
+</div>
+<article>
+<h1>Q4.5 👹 Boss: nuke it + $0 proof (25 XP)</h1>
+<p><strong>Phase:</strong> Phase 4 — EC2 + VPC + RDS</p>
+<h2>Concept</h2>
+<p>This is the cleanup boss, and it&#x27;s the most important quest in the phase. Every resource you launched has a meter: EC2 bills per second, RDS per hour, EBS volumes and snapshots per GB-month, Elastic IPs per hour while unattached, NAT gateways per hour plus per GB.</p>
+<p>Deleting the obvious instance isn&#x27;t enough, because orphaned disks, snapshots, and IPs keep billing silently. The skill is a full teardown followed by proof: verify in Billing or Cost Explorer that the account is at $0 or sandbox-clean.</p>
+<p>Then name what would have billed had you walked away. Being able to list the meters is what makes the cleanup real instead of a checkbox.</p>
+<p>Do this every session until it&#x27;s reflex. Par for this quest is nothing left running and no stray billable resource hiding in the background.</p>
+<h2>Uses</h2>
+<ul>
+<li>Prevent the classic &quot;forgot it was running&quot; bill on personal and work accounts alike.</li>
+<li>Build a repeatable teardown checklist you can apply after every lab or experiment.</li>
+<li>Learn to read Cost Explorer, the single best habit for experimenting without fear.</li>
+<li>Understand which resource types are the usual suspects for orphaned charges: EBS, snapshots, EIPs, NAT.</li>
+<li>Practice the same discipline you&#x27;ll need with SageMaker endpoints and Bedrock jobs in Phase 5.</li>
+</ul>
+<h2>Key info</h2>
+<ul>
+<li>Terminate instances: <code>aws ec2 terminate-instances --instance-ids &lt;id&gt;</code> (confirm state <code>terminated</code>).</li>
+<li>Delete RDS: <code>aws rds delete-db-instance --db-instance-identifier &lt;id&gt; --skip-final-snapshot</code>.</li>
+<li>Release Elastic IPs: <code>aws ec2 release-address --allocation-id &lt;id&gt;</code>.</li>
+<li>Delete unattached volumes: <code>aws ec2 describe-volumes --filters Name=status,Values=available</code>, then <code>aws ec2 delete-volume --volume-id &lt;id&gt;</code>.</li>
+<li>Delete leftover snapshots: <code>aws ec2 describe-snapshots --owner-ids self</code>, then <code>aws ec2 delete-snapshot</code>.</li>
+<li>Verify: open Billing → Cost Explorer, set the range to this month, confirm $0 / sandbox-clean.</li>
+<li>Name what would have billed: EC2 instance-hours, RDS instance-hours, EBS GB-month, snapshot GB-month, unattached EIP hours, NAT gateway hours + data.</li>
+</ul>
+<h2>Pitfalls</h2>
+<ul>
+<li>Terminating the instance but forgetting its unattached EBS volume or its AMI snapshots.</li>
+<li>Leaving an Elastic IP allocated after releasing the instance; an unattached EIP still bills.</li>
+<li>Trusting the console&#x27;s default view instead of explicitly checking Cost Explorer for the current period.</li>
+</ul>
+<h2>Done check</h2>
+<p>Paste the resource-terminated confirmations + the billing screenshot description. Par: nothing left running.</p>
+<h2>Links</h2>
+<ul>
+<li>Cost Explorer — https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/ce-what-is.html</li>
+<li>Terminate instances — https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/terminating-instances.html</li>
+<li>Release Elastic IPs — https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/elastic-ip-addresses-eip.html</li>
+</ul>
+</article>
+<div class="nav"><span><a class="nav-btn" href="Q4.4.html">← Q4.4 RDS Postgres, scoped access</a></span><span><a class="nav-btn" href="Q5.1.html">Q5.1 First model call →</a></span></div>
+<footer>Source: <code>quests/Q4.5.md</code> · re-run <code>python3 shared/render_dashboard.py</code> after editing.</footer>
+</body>
+</html>
