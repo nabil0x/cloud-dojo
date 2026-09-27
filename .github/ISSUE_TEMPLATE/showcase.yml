@@ -1,0 +1,24 @@
+name: Capstone showcase entry
+description: Add your Phase 8 build to SHOWCASE.md
+title: "[Showcase] "
+labels: [showcase]
+body:
+  - type: input
+    id: project
+    attributes:
+      label: Project repo link
+    validations:
+      required: true
+  - type: input
+    id: design
+    attributes:
+      label: DESIGN.md + RETRO.md links
+    validations:
+      required: true
+  - type: input
+    id: cost
+    attributes:
+      label: Cost at demo (with teardown proof)
+      placeholder: $0.00
+    validations:
+      required: true

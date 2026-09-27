@@ -1,0 +1,29 @@
+docker:
+  - phase-00-docker-foundations/**/*
+  - cheatsheets/docker.md
+aws:
+  - phase-01-aws-first-services/**/*
+  - phase-03-lambda-images/**/*
+  - phase-04-ec2-vpc-rds/**/*
+  - phase-05-bedrock-sagemaker/**/*
+  - cheatsheets/aws-cli.md
+iac:
+  - phase-06-terraform-iac/**/*
+  - cheatsheets/terraform.md
+ci-cd:
+  - phase-07-cicd-ecs/**/*
+  - cheatsheets/github-actions.md
+  - .github/workflows/**/*
+capstone:
+  - phase-08-rag-capstone/**/*
+docs:
+  - "*.md"
+  - docs/**/*
+quests:
+  - quests/**/*
+  - assessments/**/*
+dashboard:
+  - dashboard.html
+  - shared/render_dashboard.py
+  - shared/progress.py
+  - shared/progress.json

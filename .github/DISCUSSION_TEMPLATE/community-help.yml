@@ -1,0 +1,22 @@
+title: "[Help] "
+body:
+  - type: input
+    id: quest
+    attributes:
+      label: Quest ID
+      description: e.g. Q2.3, T.2, M.1
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What did you run, and what happened?
+      description: Paste the exact command and the FULL output.
+      render: shell
+    validations:
+      required: true
+  - type: input
+    id: env
+    attributes:
+      label: Environment
+      description: e.g. MiniStack in Docker on Ubuntu, LocalStack Hobby, Codespaces

@@ -1,0 +1,14 @@
+title: "[Idea] "
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: Your idea
+      description: New quest, phase, cheatsheet, or course improvement in 3 sentences or fewer.
+    validations:
+      required: true
+  - type: input
+    id: phase
+    attributes:
+      label: Target phase (if any)
+      description: e.g. Phase 4, Track T, new phase

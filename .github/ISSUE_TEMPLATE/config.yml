@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Ask for help (Discussions Q&A)
+    url: https://github.com/nabil0x/cloud-dojo/discussions/categories/community-help
+    about: Stuck on a quest? Ask here with your command + full output.
+  - name: Share your build (Show and tell)
+    url: https://github.com/nabil0x/cloud-dojo/discussions/categories/show-and-tell
+    about: Finished something cool? Show it off.

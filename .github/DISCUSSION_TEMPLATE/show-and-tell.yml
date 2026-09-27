@@ -1,0 +1,16 @@
+title: "[Showcase] "
+body:
+  - type: input
+    id: what
+    attributes:
+      label: What did you build/finish?
+      description: e.g. Phase 8 capstone, Module M suite, your DESIGN.md
+    validations:
+      required: true
+  - type: textarea
+    id: link
+    attributes:
+      label: Link + one screenshot/description
+      description: Repo link and what makes it yours.
+    validations:
+      required: true
