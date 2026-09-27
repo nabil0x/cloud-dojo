@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.pyc
+*.out
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfvars
+!shared/.env.example
+
+# Local secrets / env
+.env
+volume/
+
+# OS / editors
+.DS_Store
+
+# Local tooling state (never commit)
+.codegraph/
+.omo/
