@@ -31,6 +31,13 @@ Docker (images, volumes, networks, Compose) → AWS core (IAM, S3, EC2, VPC, RDS
 
 **⭐ If this helps you learn, star the repo — it keeps the dojo alive.**
 
+## Learn more (reference shelf)
+- 📖 [Glossary](GLOSSARY.md) — jargon decoder, one line per term
+- 🆘 [Troubleshooting](TROUBLESHOOTING.md) — error decoder, find your symptom
+- 🗺️ [Architecture maps](docs/architecture.md) — journey, stack, and capstone diagrams
+- 📚 [Curated resources](RESOURCES.md) — sandboxes, docs, courses, communities
+- 📋 Cheatsheets: [Docker](cheatsheets/docker.md) · [AWS CLI](cheatsheets/aws-cli.md) · [Terraform](cheatsheets/terraform.md) · [GitHub Actions](cheatsheets/github-actions.md)
+
 ## Start here
 1. Read `GAME-RULES.md` (2 min) — XP, levels, badges.
 2. Read `ROADMAP.md` (5 min) — all 4 phases + the parallel IAM track.
