@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Q5.3 SageMaker training run — Cloud Dojo</title>
+<style>:root{--bg:#0d1117;--card:#161b22;--line:#30363d;--txt:#e6edf3;
+--mut:#8b949e;--grn:#3fb950;--amb:#d29922;--blu:#58a6ff;--pur:#bc8cff}
+*{box-sizing:border-box}body{background:var(--bg);color:var(--txt);
+font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;margin:0;
+padding:24px;max-width:860px;margin-inline:auto;line-height:1.6}
+.crumb{margin-bottom:14px;font-size:.9rem}.crumb a{color:var(--blu);text-decoration:none}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:18px}
+.hero h1{font-size:1.4rem;margin:0 0 6px}.meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+color:var(--mut);font-size:.9rem}
+.pill{padding:2px 10px;border-radius:999px;font-size:.8rem;border:1px solid var(--line)}
+.pill.done{color:var(--grn);border-color:var(--grn)}.pill.active{color:var(--amb);border-color:var(--amb)}
+.pill.locked{color:var(--mut)}
+article{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+article h2{font-size:1.05rem;margin:20px 0 8px;color:var(--blu)}article h2:first-child{margin-top:0}
+article p{margin:8px 0}article ul{margin:8px 0;padding-left:22px}article li{margin:4px 0}
+article a{color:var(--blu)}code{background:#21262d;padding:2px 6px;border-radius:6px;
+font-family:ui-monospace,monospace;font-size:.88em}
+pre{background:#010409;border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
+pre code{background:none;padding:0}
+.nav{display:flex;justify-content:space-between;gap:12px;margin:18px 0;flex-wrap:wrap}
+.nav-btn{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 14px;
+color:var(--txt);text-decoration:none;font-size:.9rem}.nav-btn:hover{border-color:var(--blu)}
+footer{color:var(--mut);font-size:.85rem;margin-top:16px}footer code{background:#21262d;
+padding:2px 6px;border-radius:6px}</style>
+</head>
+<body>
+<div class="crumb"><a href="../dashboard.html">← Cloud Dojo dashboard</a> · Phase 5 — Bedrock + SageMaker</div>
+<div class="hero">
+<h1>Q5.3 — SageMaker training run</h1>
+<div class="meta"><span class="pill locked">🔒 locked</span><span>35 XP</span><span>Phase 5 — Bedrock + SageMaker</span></div>
+</div>
+<article>
+<h1>Q5.3 — SageMaker training run (35 XP)</h1>
+<p><strong>Phase:</strong> Phase 5 — Bedrock + SageMaker</p>
+<h2>Concept</h2>
+<p>SageMaker is AWS&#x27;s full machine learning platform, and its training jobs are managed, metered compute: you hand it a script, a dataset, and an instance type, and it hands back metrics and a model artifact. You don&#x27;t manage the servers; you&#x27;re billed while the job runs, by instance-hour.</p>
+<p>SageMaker Studio (or a notebook instance) is the development environment, and it bills like EC2, so it should be stopped the moment you stop working. That idle notebook is the most common SageMaker cost leak.</p>
+<p>JumpStart gives you prebuilt models and notebooks, the fastest route to a fine-tune without writing a training loop; a toy PyTorch script on a tiny dataset works too. The deliverable is simple but complete.</p>
+<p>A job that reaches <code>Completed</code>, one metric you actually looked at, and the artifact safely written to S3. Real AWS only, so clean up the notebook instance and any idle compute after.</p>
+<h2>Uses</h2>
+<ul>
+<li>Fine-tune a prebuilt model on your own labeled data before deploying it.</li>
+<li>Run reproducible training experiments with metrics tracked centrally.</li>
+<li>Train on managed GPUs without provisioning or patching a cluster.</li>
+<li>Produce a model artifact in S3 ready for an endpoint or Batch Transform.</li>
+<li>Use JumpStart notebooks to skip boilerplate and focus on data and results.</li>
+</ul>
+<h2>Key info</h2>
+<ul>
+<li>Dev environment: SageMaker Studio or a notebook instance. Stop the notebook instance when idle, it bills like EC2.</li>
+<li>Job inputs come from S3 (dataset), outputs go back to S3 (model artifact).</li>
+<li>JumpStart fine-tune is the fastest path; a small script on a tiny dataset is fine for learning.</li>
+<li>Watch one metric (even a bad loss curve); tracking beats a perfect score here.</li>
+<li>Check status: <code>aws sagemaker describe-training-job --training-job-name &lt;name&gt;</code> until <code>Completed</code>.</li>
+<li>Record the artifact S3 path: <code>s3://&lt;bucket&gt;/&lt;job-name&gt;/output/model.tar.gz</code>.</li>
+<li>Billing: training bills per instance-hour while running; notebook instances bill while running; artifacts bill for S3 storage. Use managed spot to cut cost if available.</li>
+</ul>
+<h2>Pitfalls</h2>
+<ul>
+<li>Leaving the Studio or notebook instance running after the job, the most common SageMaker cost leak.</li>
+<li>Forgetting the S3 output path, so you can&#x27;t find or reuse the artifact later.</li>
+<li>Submitting a training job on a large instance for a toy dataset, wasting money for no gain.</li>
+</ul>
+<h2>Done check</h2>
+<p>Paste the training job status (<code>Completed</code>) + the S3 path of the artifact.</p>
+<h2>Links</h2>
+<ul>
+<li>SageMaker training — https://docs.aws.amazon.com/sagemaker/latest/dg/how-it-works-training.html</li>
+<li>SageMaker JumpStart — https://docs.aws.amazon.com/sagemaker/latest/dg/studio-jumpstart.html</li>
+<li>Train a model — https://docs.aws.amazon.com/sagemaker/latest/dg/train-model.html</li>
+</ul>
+</article>
+<div class="nav"><span><a class="nav-btn" href="Q5.2.html">← Q5.2 Ground it with your data</a></span><span><a class="nav-btn" href="Q5.4.html">Q5.4 Deploy endpoint, then kill it →</a></span></div>
+<footer>Source: <code>quests/Q5.3.md</code> · re-run <code>python3 shared/render_dashboard.py</code> after editing.</footer>
+</body>
+</html>

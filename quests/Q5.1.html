@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Q5.1 First model call — Cloud Dojo</title>
+<style>:root{--bg:#0d1117;--card:#161b22;--line:#30363d;--txt:#e6edf3;
+--mut:#8b949e;--grn:#3fb950;--amb:#d29922;--blu:#58a6ff;--pur:#bc8cff}
+*{box-sizing:border-box}body{background:var(--bg);color:var(--txt);
+font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;margin:0;
+padding:24px;max-width:860px;margin-inline:auto;line-height:1.6}
+.crumb{margin-bottom:14px;font-size:.9rem}.crumb a{color:var(--blu);text-decoration:none}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:18px}
+.hero h1{font-size:1.4rem;margin:0 0 6px}.meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+color:var(--mut);font-size:.9rem}
+.pill{padding:2px 10px;border-radius:999px;font-size:.8rem;border:1px solid var(--line)}
+.pill.done{color:var(--grn);border-color:var(--grn)}.pill.active{color:var(--amb);border-color:var(--amb)}
+.pill.locked{color:var(--mut)}
+article{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+article h2{font-size:1.05rem;margin:20px 0 8px;color:var(--blu)}article h2:first-child{margin-top:0}
+article p{margin:8px 0}article ul{margin:8px 0;padding-left:22px}article li{margin:4px 0}
+article a{color:var(--blu)}code{background:#21262d;padding:2px 6px;border-radius:6px;
+font-family:ui-monospace,monospace;font-size:.88em}
+pre{background:#010409;border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
+pre code{background:none;padding:0}
+.nav{display:flex;justify-content:space-between;gap:12px;margin:18px 0;flex-wrap:wrap}
+.nav-btn{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 14px;
+color:var(--txt);text-decoration:none;font-size:.9rem}.nav-btn:hover{border-color:var(--blu)}
+footer{color:var(--mut);font-size:.85rem;margin-top:16px}footer code{background:#21262d;
+padding:2px 6px;border-radius:6px}</style>
+</head>
+<body>
+<div class="crumb"><a href="../dashboard.html">← Cloud Dojo dashboard</a> · Phase 5 — Bedrock + SageMaker</div>
+<div class="hero">
+<h1>Q5.1 — First model call</h1>
+<div class="meta"><span class="pill locked">🔒 locked</span><span>30 XP</span><span>Phase 5 — Bedrock + SageMaker</span></div>
+</div>
+<article>
+<h1>Q5.1 — First model call (30 XP)</h1>
+<p><strong>Phase:</strong> Phase 5 — Bedrock + SageMaker</p>
+<h2>Concept</h2>
+<p>Bedrock gives you foundation models as an API. You don&#x27;t manage GPUs or servers; you call a model like any other AWS service and pay per token. Models include Claude, Llama, Mistral, Titan, and Nova, and some require a one-time access request per region before they&#x27;ll answer.</p>
+<p>The two parameters that matter most for building instincts are <code>temperature</code> and <code>max_tokens</code>. Temperature controls randomness: <code>0</code> is close to deterministic and tends to repeat itself, while <code>1</code> wanders and varies from run to run.</p>
+<p><code>max_tokens</code> caps the length of the reply, which directly caps cost and latency, because output tokens are billed and slower than input tokens. Set it deliberately instead of leaving it at the maximum.</p>
+<p>This quest makes you feel that difference by running the same prompt twice with different settings. It runs in a real sandbox where every call costs a little money, so note the model&#x27;s per-token rate before you start.</p>
+<h2>Uses</h2>
+<ul>
+<li>Add a chat or generation feature to an app without hosting a model.</li>
+<li>Summarize, classify, or extract structured data from text at scale.</li>
+<li>Prototype an AI feature before committing to fine-tuning or a dedicated endpoint.</li>
+<li>Compare models on the same prompt to pick the right cost/quality tradeoff.</li>
+<li>Build deterministic pipelines (temperature near 0) or creative drafts (higher temperature).</li>
+</ul>
+<h2>Key info</h2>
+<ul>
+<li>Request model access in the Bedrock console if the model is greyed out in your region.</li>
+<li>Invoke via CLI: <code>aws bedrock-runtime invoke-model --model-id &lt;id&gt; --body &#x27;{&quot;prompt&quot;:..., &quot;temperature&quot;:0, &quot;max_tokens&quot;:50}&#x27; out.json</code>.</li>
+<li>Keep the same prompt and change only <code>temperature</code> (0 vs 1) and <code>max_tokens</code>; compare both responses.</li>
+<li>Pricing is per 1k input and output tokens and varies widely by model; output tokens cost more than input.</li>
+<li>Note the per-model rate before bulk jobs; a loop of calls adds up fast.</li>
+<li>Real sandbox only: Bedrock has no meaningful emulator, and every invocation bills.</li>
+</ul>
+<h2>Pitfalls</h2>
+<ul>
+<li>Forgetting the one-time access request, then wondering why the model errors.</li>
+<li>Setting <code>max_tokens</code> very high &quot;just in case,&quot; inflating both latency and bill.</li>
+<li>Assuming temperature 0 is perfectly deterministic; it&#x27;s near-deterministic, not a guarantee.</li>
+</ul>
+<h2>Done check</h2>
+<p>Paste both responses (truncated) + one sentence on what temperature changed.</p>
+<h2>Links</h2>
+<ul>
+<li>Bedrock user guide — https://docs.aws.amazon.com/bedrock/latest/userguide/</li>
+<li>Inference parameters — https://docs.aws.amazon.com/bedrock/latest/userguide/inference-parameters.html</li>
+<li>Bedrock pricing — https://aws.amazon.com/bedrock/pricing/</li>
+</ul>
+</article>
+<div class="nav"><span><a class="nav-btn" href="Q4.5.html">← Q4.5 👹 Boss: nuke it + $0 proof</a></span><span><a class="nav-btn" href="Q5.2.html">Q5.2 Ground it with your data →</a></span></div>
+<footer>Source: <code>quests/Q5.1.md</code> · re-run <code>python3 shared/render_dashboard.py</code> after editing.</footer>
+</body>
+</html>

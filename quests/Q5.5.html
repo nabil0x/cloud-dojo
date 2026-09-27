@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Q5.5 👹 Boss: $0 audit — Cloud Dojo</title>
+<style>:root{--bg:#0d1117;--card:#161b22;--line:#30363d;--txt:#e6edf3;
+--mut:#8b949e;--grn:#3fb950;--amb:#d29922;--blu:#58a6ff;--pur:#bc8cff}
+*{box-sizing:border-box}body{background:var(--bg);color:var(--txt);
+font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;margin:0;
+padding:24px;max-width:860px;margin-inline:auto;line-height:1.6}
+.crumb{margin-bottom:14px;font-size:.9rem}.crumb a{color:var(--blu);text-decoration:none}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:18px}
+.hero h1{font-size:1.4rem;margin:0 0 6px}.meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+color:var(--mut);font-size:.9rem}
+.pill{padding:2px 10px;border-radius:999px;font-size:.8rem;border:1px solid var(--line)}
+.pill.done{color:var(--grn);border-color:var(--grn)}.pill.active{color:var(--amb);border-color:var(--amb)}
+.pill.locked{color:var(--mut)}
+article{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+article h2{font-size:1.05rem;margin:20px 0 8px;color:var(--blu)}article h2:first-child{margin-top:0}
+article p{margin:8px 0}article ul{margin:8px 0;padding-left:22px}article li{margin:4px 0}
+article a{color:var(--blu)}code{background:#21262d;padding:2px 6px;border-radius:6px;
+font-family:ui-monospace,monospace;font-size:.88em}
+pre{background:#010409;border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
+pre code{background:none;padding:0}
+.nav{display:flex;justify-content:space-between;gap:12px;margin:18px 0;flex-wrap:wrap}
+.nav-btn{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 14px;
+color:var(--txt);text-decoration:none;font-size:.9rem}.nav-btn:hover{border-color:var(--blu)}
+footer{color:var(--mut);font-size:.85rem;margin-top:16px}footer code{background:#21262d;
+padding:2px 6px;border-radius:6px}</style>
+</head>
+<body>
+<div class="crumb"><a href="../dashboard.html">← Cloud Dojo dashboard</a> · Phase 5 — Bedrock + SageMaker</div>
+<div class="hero">
+<h1>Q5.5 — 👹 Boss: $0 audit</h1>
+<div class="meta"><span class="pill locked">🔒 locked</span><span>25 XP</span><span>Phase 5 — Bedrock + SageMaker</span></div>
+</div>
+<article>
+<h1>Q5.5 👹 Boss: $0 audit (25 XP)</h1>
+<p><strong>Phase:</strong> Phase 5 — Bedrock + SageMaker</p>
+<h2>Concept</h2>
+<p>This boss turns cost discipline into reflex. Bedrock and SageMaker run three meters at once: tokens (every API call), instance-hours (endpoints, notebook instances, training jobs), and storage (artifacts, snapshots, vector stores). Any of them left running bills quietly.</p>
+<p>The audit is a checklist you walk end to end: no endpoints, no notebook instances running, no training jobs stuck <code>InProgress</code>, and Knowledge Base data sources you actually understand. Then you open billing and confirm $0 or sandbox-clean.</p>
+<p>Write down the real per-unit costs you observed, such as per-1k-tokens and endpoint dollars per hour. That last step is what makes the number concrete and the habit durable.</p>
+<p>The point isn&#x27;t just a clean account; it&#x27;s the confidence that lets you experiment fearlessly because you know you can always clean up and verify. That muscle is the real prize of Phase 5.</p>
+<h2>Uses</h2>
+<ul>
+<li>End every AI experiment cleanly instead of discovering the bill next month.</li>
+<li>Build the reflex to note a rate before creating anything billable and verify after deleting.</li>
+<li>Understand which SageMaker and Bedrock resources are the usual orphaned-cost suspects.</li>
+<li>Keep shared sandbox accounts at $0 so teammates aren&#x27;t surprised by your leftovers.</li>
+<li>Turn cost review into a routine you carry to any cloud account, work or personal.</li>
+</ul>
+<h2>Key info</h2>
+<ul>
+<li>Verify no endpoints: <code>aws sagemaker list-endpoints</code>.</li>
+<li>Verify no notebook instances: <code>aws sagemaker list-notebook-instances</code> (check for <code>InService</code>).</li>
+<li>Verify no stuck jobs: <code>aws sagemaker list-training-jobs --status-equals InProgress</code>.</li>
+<li>Confirm Knowledge Base data sources and delete the ones you no longer need.</li>
+<li>Open Billing → Cost Explorer for the current period and confirm $0 / sandbox-clean.</li>
+<li>Write the observed costs: Bedrock per-1k input and output tokens, SageMaker endpoint $/hr, notebook instance $/hr, artifact storage rate.</li>
+<li>Real AWS only; this phase has no meaningful emulator, so cleanup is the whole game.</li>
+</ul>
+<h2>Pitfalls</h2>
+<ul>
+<li>Checking the console but missing a notebook instance or endpoint that the console hides under a filter.</li>
+<li>Leaving a training job in <code>InProgress</code> because it &quot;looks finished&quot;; confirm the actual status.</li>
+<li>Skipping the cost notes, so the per-unit rates never stick and the next lab overshoots budget.</li>
+</ul>
+<h2>Done check</h2>
+<p>Paste the resource-cleanup checklist + the cost notes. This is the muscle that lets you experiment fearlessly forever.</p>
+<h2>Links</h2>
+<ul>
+<li>Cost Explorer — https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/ce-what-is.html</li>
+<li>SageMaker endpoints — https://docs.aws.amazon.com/sagemaker/latest/dg/deploy-model.html</li>
+<li>SageMaker pricing — https://aws.amazon.com/sagemaker/pricing/</li>
+</ul>
+</article>
+<div class="nav"><span><a class="nav-btn" href="Q5.4.html">← Q5.4 Deploy endpoint, then kill it</a></span><span><a class="nav-btn" href="Q6.1.html">Q6.1 First config: provider + bucket →</a></span></div>
+<footer>Source: <code>quests/Q5.5.md</code> · re-run <code>python3 shared/render_dashboard.py</code> after editing.</footer>
+</body>
+</html>
