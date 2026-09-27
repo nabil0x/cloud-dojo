@@ -33,17 +33,21 @@ Docker (images, volumes, networks, Compose) → AWS core (IAM, S3, EC2, VPC, RDS
 **⭐ If this helps you learn, star the repo — it keeps the dojo alive.**
 
 ## Learn more (reference shelf)
-- 📖 [Glossary](GLOSSARY.md) — jargon decoder, one line per term
-- 🆘 [Troubleshooting](TROUBLESHOOTING.md) — error decoder, find your symptom
-- 🗺️ [Architecture maps](docs/architecture.md) — journey, stack, and capstone diagrams
-- 📚 [Curated resources](RESOURCES.md) — sandboxes, docs, courses, communities
+- 🚀 [Quickstart](docs/start/QUICKSTART.md) — first XP in 5 minutes · Setup: [Windows/WSL2](docs/start/SETUP-WINDOWS.md) · [macOS](docs/start/SETUP-MAC.md)
+- 📖 [Glossary](docs/learn/GLOSSARY.md) — jargon decoder, one line per term
+- 🆘 [Troubleshooting](docs/learn/TROUBLESHOOTING.md) — error decoder, find your symptom
+- 🗺️ [Architecture maps](docs/learn/architecture.md) — journey, stack, and capstone diagrams
+- 📚 [Curated resources](docs/learn/RESOURCES.md) — sandboxes, docs, courses, communities
+- 🗺️ [Curriculum matrix](docs/learn/CURRICULUM.md) — objectives, prerequisites, time per phase
 - 📋 Cheatsheets: [Docker](cheatsheets/docker.md) · [AWS CLI](cheatsheets/aws-cli.md) · [Terraform](cheatsheets/terraform.md) · [GitHub Actions](cheatsheets/github-actions.md)
-- 🚀 [Quickstart](QUICKSTART.md) — first XP in 5 minutes · Setup: [Windows/WSL2](SETUP-WINDOWS.md) · [macOS](SETUP-MAC.md)
-- 👥 [Study group runbook](STUDY-GROUP.md) — 8-week cohort format with roles
-- ✅ Self-checks: [assessments/](assessments/) — 10 questions per phase, answers hidden (no XP, honor system)
-- 🗺️ [Curriculum matrix](CURRICULUM.md) — objectives, prerequisites, time per phase
-- 🃏 [Flashcards](flashcards/REVIEW.md) — Anki deck built from the glossary
-- 🏆 [Showcase](SHOWCASE.md) — learner capstone builds (certificate via `shared/render_certificate.py`)
+- ✅ [Self-checks](docs/learn/assessments/) — 10 questions per phase, answers hidden
+- 🃏 [Flashcards](docs/learn/flashcards/REVIEW.md) — Anki deck from the glossary
+- 🏆 [Showcase](docs/community/SHOWCASE.md) — learner capstone builds
+- 👥 [Study group runbook](docs/community/STUDY-GROUP.md) — 8-week cohort format
+- ✅ Self-checks: [assessments/](docs/learn/assessments/) — 10 questions per phase, answers hidden (no XP, honor system)
+- 🗺️ [Curriculum matrix](docs/learn/CURRICULUM.md) — objectives, prerequisites, time per phase
+- 🃏 [Flashcards](docs/learn/flashcards/REVIEW.md) — Anki deck built from the glossary
+- 🏆 [Showcase](docs/community/SHOWCASE.md) — learner capstone builds (certificate via `shared/render_certificate.py`)
 - 📝 [Changelog](CHANGELOG.md) — what changed, per release
 
 ## Start here

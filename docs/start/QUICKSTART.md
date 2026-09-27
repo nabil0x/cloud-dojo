@@ -23,6 +23,6 @@ python3 shared/progress.py status
 ```
 Then open `dashboard.html` — your bar moved. Paste the `hello-world` output
 wherever your group chats, and continue to
-[Phase 0](phase-00-docker-foundations/README.md) Q0.2.
+[Phase 0](../../phase-00-docker-foundations/README.md) Q0.2.
 
-Stuck anywhere? [Troubleshooting](TROUBLESHOOTING.md) → symptom first, theory later.
+Stuck anywhere? [Troubleshooting](../learn/TROUBLESHOOTING.md) → symptom first, theory later.

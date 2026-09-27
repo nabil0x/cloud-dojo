@@ -17,6 +17,9 @@ volume/
 # OS / editors
 .DS_Store
 
+# Generated per-graduate artifact (never commit)
+certificate.html
+
 # Local tooling state (never commit)
 .codegraph/
 .omo/

@@ -10,7 +10,8 @@ Course repo: gamified Docker + AWS learning path. XP economy is load-bearing; do
 ## Content conventions
 - Quests: title, XP, steps, **Done check** (exact command + expected output). No output, no XP.
 - Quest pages live in `quests/<ID>.md` (+ generated `.html`); sections: Concept / Uses / Key info / Pitfalls / Done check / Links.
-- Self-checks in `assessments/` carry **no XP** (honor system); answers in `<details>` blocks.
+- Self-checks in `docs/learn/assessments/` carry **no XP** (honor system); answers in `<details>` blocks.
+- Reading material lives in `docs/` (`start/`, `learn/`, `community/`); generated quest HTML in `quests/html/`.
 - Study guides (`STUDY.md`) teach concepts; READMEs run quests. Never mix the two jobs.
 - No real credentials anywhere (`test`/`test` only). Every billable phase ends in a teardown boss.
 
