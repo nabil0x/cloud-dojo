@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>T.2 IAM users, groups, policies — Cloud Dojo</title>
+<style>:root{--bg:#0d1117;--card:#161b22;--line:#30363d;--txt:#e6edf3;
+--mut:#8b949e;--grn:#3fb950;--amb:#d29922;--blu:#58a6ff;--pur:#bc8cff}
+*{box-sizing:border-box}body{background:var(--bg);color:var(--txt);
+font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;margin:0;
+padding:24px;max-width:860px;margin-inline:auto;line-height:1.6}
+.crumb{margin-bottom:14px;font-size:.9rem}.crumb a{color:var(--blu);text-decoration:none}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:18px}
+.hero h1{font-size:1.4rem;margin:0 0 6px}.meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+color:var(--mut);font-size:.9rem}
+.pill{padding:2px 10px;border-radius:999px;font-size:.8rem;border:1px solid var(--line)}
+.pill.done{color:var(--grn);border-color:var(--grn)}.pill.active{color:var(--amb);border-color:var(--amb)}
+.pill.locked{color:var(--mut)}
+article{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+article h2{font-size:1.05rem;margin:20px 0 8px;color:var(--blu)}article h2:first-child{margin-top:0}
+article p{margin:8px 0}article ul{margin:8px 0;padding-left:22px}article li{margin:4px 0}
+article a{color:var(--blu)}code{background:#21262d;padding:2px 6px;border-radius:6px;
+font-family:ui-monospace,monospace;font-size:.88em}
+pre{background:#010409;border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
+pre code{background:none;padding:0}
+.nav{display:flex;justify-content:space-between;gap:12px;margin:18px 0;flex-wrap:wrap}
+.nav-btn{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 14px;
+color:var(--txt);text-decoration:none;font-size:.9rem}.nav-btn:hover{border-color:var(--blu)}
+footer{color:var(--mut);font-size:.85rem;margin-top:16px}footer code{background:#21262d;
+padding:2px 6px;border-radius:6px}</style>
+</head>
+<body>
+<div class="crumb"><a href="../dashboard.html">← Cloud Dojo dashboard</a> · Track T — Real-AWS Parallel Track</div>
+<div class="hero">
+<h1>T.2 — IAM users, groups, policies</h1>
+<div class="meta"><span class="pill locked">🔒 locked</span><span>30 XP</span><span>Track T — Real-AWS Parallel Track</span></div>
+</div>
+<article>
+<h1>T.2 — IAM users, groups, policies (30 XP)</h1>
+<p><strong>Phase:</strong> Track T — Real-AWS Parallel Track</p>
+<h2>Concept</h2>
+<p>IAM decides who can do what on real AWS, and unlike an emulator it actually says no.</p>
+<p>You model people as users, organize them with groups, and grant permissions by attaching policies to the group rather than to each user.</p>
+<p>A policy is a JSON document that lists an effect (Allow or Deny), actions, and resources.</p>
+<p>To prove the model, you create a group with one managed policy, add a user, sign in as that user, and confirm an allowed call works.</p>
+<p>Then you detach the policy and confirm the same call fails with <code>AccessDenied</code>.</p>
+<p>That two-sided proof, allowed then denied, is the whole quest. Seeing the denial is what teaches you IAM is real here.</p>
+<h2>Uses</h2>
+<ul>
+<li>Onboarding teammates with the right access and nothing more.</li>
+<li>Centralizing permissions in groups so users inherit access cleanly.</li>
+<li>Auditing who can touch which resources through attached policies.</li>
+<li>Reproducing least-privilege mistakes and their fixes on real infrastructure.</li>
+<li>Understanding the exact error a service hits when a permission is missing.</li>
+</ul>
+<h2>Key info</h2>
+<ul>
+<li>Create a group: <code>aws iam create-group --group-name dojo-readers</code></li>
+<li>Create a user: <code>aws iam create-user --user-name dojo-alice</code></li>
+<li>Add to group: <code>aws iam add-user-to-group --group-name dojo-readers --user-name dojo-alice</code></li>
+<li>Attach a managed policy: <code>aws iam attach-group-policy --group-name dojo-readers --policy-arn arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess</code></li>
+<li>Prove access, then <code>detach-group-policy</code> and prove it fails with <code>AccessDenied</code>.</li>
+<li>Explicit Deny always beats Allow, and a missing permission is an implicit deny.</li>
+<li>This is real AWS only. The emulator does not evaluate policies, so nothing here would fail there.</li>
+</ul>
+<h2>Pitfalls</h2>
+<ul>
+<li>Attaching policies to individual users instead of groups, which does not scale and hides why access exists.</li>
+<li>Creating long-lived access keys for a human user. Prefer console or SSO sign-in and give keys to roles, not people.</li>
+<li>Removing the policy but testing with an old cached session, so the denial does not appear immediately.</li>
+</ul>
+<h2>Done check</h2>
+<p>paste the allowed call output AND the explicit <code>AccessDenied</code> error. Both halves count.</p>
+<h2>Links</h2>
+<ul>
+<li>IAM best practices: https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html</li>
+<li>IAM policies and permissions: https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies.html</li>
+<li>IAM policy evaluation logic: https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic.html</li>
+</ul>
+</article>
+<div class="nav"><span><a class="nav-btn" href="T.1.html">← T.1 Claim your sandbox</a></span><span><a class="nav-btn" href="T.3.html">T.3 Least privilege + MFA →</a></span></div>
+<footer>Source: <code>quests/T.2.md</code> · re-run <code>python3 shared/render_dashboard.py</code> after editing.</footer>
+</body>
+</html>

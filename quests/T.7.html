@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>T.7 CloudWatch observability — Cloud Dojo</title>
+<style>:root{--bg:#0d1117;--card:#161b22;--line:#30363d;--txt:#e6edf3;
+--mut:#8b949e;--grn:#3fb950;--amb:#d29922;--blu:#58a6ff;--pur:#bc8cff}
+*{box-sizing:border-box}body{background:var(--bg);color:var(--txt);
+font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;margin:0;
+padding:24px;max-width:860px;margin-inline:auto;line-height:1.6}
+.crumb{margin-bottom:14px;font-size:.9rem}.crumb a{color:var(--blu);text-decoration:none}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:18px}
+.hero h1{font-size:1.4rem;margin:0 0 6px}.meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+color:var(--mut);font-size:.9rem}
+.pill{padding:2px 10px;border-radius:999px;font-size:.8rem;border:1px solid var(--line)}
+.pill.done{color:var(--grn);border-color:var(--grn)}.pill.active{color:var(--amb);border-color:var(--amb)}
+.pill.locked{color:var(--mut)}
+article{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+article h2{font-size:1.05rem;margin:20px 0 8px;color:var(--blu)}article h2:first-child{margin-top:0}
+article p{margin:8px 0}article ul{margin:8px 0;padding-left:22px}article li{margin:4px 0}
+article a{color:var(--blu)}code{background:#21262d;padding:2px 6px;border-radius:6px;
+font-family:ui-monospace,monospace;font-size:.88em}
+pre{background:#010409;border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
+pre code{background:none;padding:0}
+.nav{display:flex;justify-content:space-between;gap:12px;margin:18px 0;flex-wrap:wrap}
+.nav-btn{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 14px;
+color:var(--txt);text-decoration:none;font-size:.9rem}.nav-btn:hover{border-color:var(--blu)}
+footer{color:var(--mut);font-size:.85rem;margin-top:16px}footer code{background:#21262d;
+padding:2px 6px;border-radius:6px}</style>
+</head>
+<body>
+<div class="crumb"><a href="../dashboard.html">← Cloud Dojo dashboard</a> · Track T — Real-AWS Parallel Track</div>
+<div class="hero">
+<h1>T.7 — CloudWatch observability</h1>
+<div class="meta"><span class="pill locked">🔒 locked</span><span>25 XP</span><span>Track T — Real-AWS Parallel Track</span></div>
+</div>
+<article>
+<h1>T.7 — CloudWatch observability (25 XP)</h1>
+<p><strong>Phase:</strong> Track T — Real-AWS Parallel Track</p>
+<h2>Concept</h2>
+<p>Once a function runs in real AWS, you need to see what it is doing without logging into a server.</p>
+<p>CloudWatch gives you metrics (numbers over time), logs (raw output for forensics), dashboards (the wall of truth), and alarms (a threshold plus an action).</p>
+<p>In this quest you build a dashboard for a real Lambda function showing errors, invocations, and duration.</p>
+<p>Then you write a Logs Insights query, for example to find the slowest invocations, and create an alarm on error rate that notifies you.</p>
+<p>The rule of thumb: metrics drive alerting, logs drive debugging.</p>
+<p>Alarms should fire on symptoms a human cares about, not on every metric wiggle.</p>
+<h2>Uses</h2>
+<ul>
+<li>Spotting error spikes and latency regressions before users complain.</li>
+<li>Investigating a single request through its log lines.</li>
+<li>Giving a team one dashboard that shows service health at a glance.</li>
+<li>Paging a human only when something genuinely needs attention.</li>
+<li>Building a feedback loop you will reuse for every later capstone function.</li>
+</ul>
+<h2>Key info</h2>
+<ul>
+<li>Dashboard widgets for a Lambda: <code>Errors</code>, <code>Invocations</code>, and <code>Duration</code> metrics.</li>
+<li>Logs Insights query example: <code>fields @timestamp, @duration | sort @duration desc | limit 20</code> for the slowest invocations.</li>
+<li>Create an alarm on error rate (for example, errors over a threshold in five minutes) with an SNS topic as the action.</li>
+<li>CloudWatch metrics come from the service automatically; application logs need permissions to be written.</li>
+<li>Alarm on symptoms that page a person, not on every metric fluctuation.</li>
+<li>This runs on real AWS, where metrics and alarms reflect actual traffic, unlike an emulator.</li>
+<li>Dashboards are cheap to make and pay off the first time an incident starts.</li>
+<li>An SNS topic turns an alarm into an email, which is what makes it act rather than just exist.</li>
+</ul>
+<h2>Pitfalls</h2>
+<ul>
+<li>Creating an alarm with no action, so it fires into the void.</li>
+<li>Alerting on a noisy metric, which trains the team to ignore alarms entirely.</li>
+<li>Forgetting log retention, so storage grows forever, one of the billing culprits from T.4.</li>
+</ul>
+<h2>Done check</h2>
+<p>paste the Insights query + results + the alarm configuration.</p>
+<h2>Links</h2>
+<ul>
+<li>CloudWatch dashboards: https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Dashboards.html</li>
+<li>Logs Insights queries: https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/AnalyzingLogData.html</li>
+<li>Alarms and notifications: https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html</li>
+</ul>
+</article>
+<div class="nav"><span><a class="nav-btn" href="T.6.html">← T.6 KMS + SSM Parameter Store</a></span><span><a class="nav-btn" href="T.8.html">T.8 API Gateway authorizer →</a></span></div>
+<footer>Source: <code>quests/T.7.md</code> · re-run <code>python3 shared/render_dashboard.py</code> after editing.</footer>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>T.1 Claim your sandbox — Cloud Dojo</title>
+<style>:root{--bg:#0d1117;--card:#161b22;--line:#30363d;--txt:#e6edf3;
+--mut:#8b949e;--grn:#3fb950;--amb:#d29922;--blu:#58a6ff;--pur:#bc8cff}
+*{box-sizing:border-box}body{background:var(--bg);color:var(--txt);
+font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;margin:0;
+padding:24px;max-width:860px;margin-inline:auto;line-height:1.6}
+.crumb{margin-bottom:14px;font-size:.9rem}.crumb a{color:var(--blu);text-decoration:none}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:18px}
+.hero h1{font-size:1.4rem;margin:0 0 6px}.meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+color:var(--mut);font-size:.9rem}
+.pill{padding:2px 10px;border-radius:999px;font-size:.8rem;border:1px solid var(--line)}
+.pill.done{color:var(--grn);border-color:var(--grn)}.pill.active{color:var(--amb);border-color:var(--amb)}
+.pill.locked{color:var(--mut)}
+article{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+article h2{font-size:1.05rem;margin:20px 0 8px;color:var(--blu)}article h2:first-child{margin-top:0}
+article p{margin:8px 0}article ul{margin:8px 0;padding-left:22px}article li{margin:4px 0}
+article a{color:var(--blu)}code{background:#21262d;padding:2px 6px;border-radius:6px;
+font-family:ui-monospace,monospace;font-size:.88em}
+pre{background:#010409;border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
+pre code{background:none;padding:0}
+.nav{display:flex;justify-content:space-between;gap:12px;margin:18px 0;flex-wrap:wrap}
+.nav-btn{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 14px;
+color:var(--txt);text-decoration:none;font-size:.9rem}.nav-btn:hover{border-color:var(--blu)}
+footer{color:var(--mut);font-size:.85rem;margin-top:16px}footer code{background:#21262d;
+padding:2px 6px;border-radius:6px}</style>
+</head>
+<body>
+<div class="crumb"><a href="../dashboard.html">← Cloud Dojo dashboard</a> · Track T — Real-AWS Parallel Track</div>
+<div class="hero">
+<h1>T.1 — Claim your sandbox</h1>
+<div class="meta"><span class="pill locked">🔒 locked</span><span>20 XP</span><span>Track T — Real-AWS Parallel Track</span></div>
+</div>
+<article>
+<h1>T.1 — Claim your sandbox (20 XP)</h1>
+<p><strong>Phase:</strong> Track T — Real-AWS Parallel Track</p>
+<h2>Concept</h2>
+<p>Track T is the only part of the dojo that runs on real AWS, never on an emulator.</p>
+<p>Emulators fake the APIs but skip the things that actually shape cloud work: IAM enforcement, billing, and quotas.</p>
+<p>To learn those safely you use a free sandbox, either the AWS Builder Center Sandbox (no account, no credit card) or a free Skill Builder lab.</p>
+<p>The sandbox is a disposable AWS account with a time limit, so mistakes cost nothing and expire on their own.</p>
+<p>Once inside, you open the console and locate IAM, S3, and the billing dashboard, the three places every later quest returns to.</p>
+<p>This is your safe place to break things, and it is where the emulator&#x27;s training wheels come off.</p>
+<h2>Uses</h2>
+<ul>
+<li>Learning AWS services hands-on without an account or a credit card.</li>
+<li>Practicing IAM and billing work with real enforcement and real guardrails.</li>
+<li>Running labs that expire and clean themselves up, so nothing lingers.</li>
+<li>Building console fluency that transfers directly to a real account.</li>
+<li>Testing a policy or an alarm and seeing the genuine consequence, not a simulation.</li>
+</ul>
+<h2>Key info</h2>
+<ul>
+<li>Start from the AWS Builder Center Sandbox or a free Skill Builder lab.</li>
+<li>The sandbox shows a time-remaining notice; that countdown is the environment&#x27;s lifetime.</li>
+<li>From the console, find IAM (identity and access), S3 (storage), and the billing dashboard.</li>
+<li>Note the console home region, because region matters for many later quests.</li>
+<li>Everything here is real AWS, so IAM policies you write are actually enforced.</li>
+<li>Never run these quests on an emulator. The whole point is the behavior emulators skip.</li>
+<li>The sandbox has no billing risk, which makes it the ideal place to learn what a real bill looks like.</li>
+<li>Bookmark the console so you can jump back to IAM and Billing quickly on every quest.</li>
+</ul>
+<h2>Pitfalls</h2>
+<ul>
+<li>Treating the sandbox like your own account. When the timer ends, everything is gone.</li>
+<li>Skipping the billing view because it feels boring. It is the whole reason Track T exists.</li>
+<li>Working in the wrong region and losing track of resources. Always confirm the region shown in the console.</li>
+</ul>
+<h2>Done check</h2>
+<p>paste the sandbox time-remaining notice + the console home region.</p>
+<h2>Links</h2>
+<ul>
+<li>AWS Builder Center Sandbox: https://aws.amazon.com/about-aws/whats-new/2026/07/aws-builder-center-sandbox</li>
+<li>Getting started with IAM: https://docs.aws.amazon.com/IAM/latest/UserGuide/getting-started.html</li>
+<li>AWS Management Console overview: https://docs.aws.amazon.com/awsconsolehelpdocs/latest/gsg/what-is.html</li>
+</ul>
+</article>
+<div class="nav"><span><a class="nav-btn" href="M.3.html">← M.3 👹 Boss: server mode</a></span><span><a class="nav-btn" href="T.2.html">T.2 IAM users, groups, policies →</a></span></div>
+<footer>Source: <code>quests/T.1.md</code> · re-run <code>python3 shared/render_dashboard.py</code> after editing.</footer>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>T.3 Least privilege + MFA — Cloud Dojo</title>
+<style>:root{--bg:#0d1117;--card:#161b22;--line:#30363d;--txt:#e6edf3;
+--mut:#8b949e;--grn:#3fb950;--amb:#d29922;--blu:#58a6ff;--pur:#bc8cff}
+*{box-sizing:border-box}body{background:var(--bg);color:var(--txt);
+font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;margin:0;
+padding:24px;max-width:860px;margin-inline:auto;line-height:1.6}
+.crumb{margin-bottom:14px;font-size:.9rem}.crumb a{color:var(--blu);text-decoration:none}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:18px}
+.hero h1{font-size:1.4rem;margin:0 0 6px}.meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+color:var(--mut);font-size:.9rem}
+.pill{padding:2px 10px;border-radius:999px;font-size:.8rem;border:1px solid var(--line)}
+.pill.done{color:var(--grn);border-color:var(--grn)}.pill.active{color:var(--amb);border-color:var(--amb)}
+.pill.locked{color:var(--mut)}
+article{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+article h2{font-size:1.05rem;margin:20px 0 8px;color:var(--blu)}article h2:first-child{margin-top:0}
+article p{margin:8px 0}article ul{margin:8px 0;padding-left:22px}article li{margin:4px 0}
+article a{color:var(--blu)}code{background:#21262d;padding:2px 6px;border-radius:6px;
+font-family:ui-monospace,monospace;font-size:.88em}
+pre{background:#010409;border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
+pre code{background:none;padding:0}
+.nav{display:flex;justify-content:space-between;gap:12px;margin:18px 0;flex-wrap:wrap}
+.nav-btn{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 14px;
+color:var(--txt);text-decoration:none;font-size:.9rem}.nav-btn:hover{border-color:var(--blu)}
+footer{color:var(--mut);font-size:.85rem;margin-top:16px}footer code{background:#21262d;
+padding:2px 6px;border-radius:6px}</style>
+</head>
+<body>
+<div class="crumb"><a href="../dashboard.html">← Cloud Dojo dashboard</a> · Track T — Real-AWS Parallel Track</div>
+<div class="hero">
+<h1>T.3 — Least privilege + MFA</h1>
+<div class="meta"><span class="pill locked">🔒 locked</span><span>25 XP</span><span>Track T — Real-AWS Parallel Track</span></div>
+</div>
+<article>
+<h1>T.3 — Least privilege + MFA (25 XP)</h1>
+<p><strong>Phase:</strong> Track T — Real-AWS Parallel Track</p>
+<h2>Concept</h2>
+<p>Least privilege means granting only the actions on only the resources that are actually needed.</p>
+<p>Instead of starting from a wildcard and subtracting, you start from nothing and add the single permission required.</p>
+<p>In this quest you write a custom policy that allows exactly one action on one resource, then attach it to a user.</p>
+<p>You also turn on multi-factor authentication, the second factor that protects sign-in even if a password leaks.</p>
+<p>Real AWS enforces both: a tight policy really does block everything outside its scope, and MFA really does gate access.</p>
+<p>This is the discipline emulators never taught you, because they allow almost everything by default.</p>
+<h2>Uses</h2>
+<ul>
+<li>Limiting the blast radius when a credential or application is compromised.</li>
+<li>Meeting compliance requirements that demand scoped access and MFA.</li>
+<li>Granting service accounts the minimum they need to run.</li>
+<li>Reviewing existing policies and trimming wildcards down to real needs.</li>
+<li>Building the habit of writing a denial test alongside every grant.</li>
+</ul>
+<h2>Key info</h2>
+<ul>
+<li>Custom policy: a JSON document with <code>Effect</code>, <code>Action</code>, and <code>Resource</code>. Example: allow <code>s3:GetObject</code> only on <code>arn:aws:s3:::dojo-bucket/*</code>.</li>
+<li>Attach it to a user or role, then test both the allowed action and a neighboring denied action.</li>
+<li>Enable MFA for the user and confirm the MFA status shows as enabled.</li>
+<li>The wildcard <code>*</code> in actions or resources is the enemy of least privilege.</li>
+<li><code>aws:MultiFactorAuthPresent</code> can enforce MFA inside a policy for sensitive actions.</li>
+<li>This is real AWS only. The emulator does not enforce the policy you write.</li>
+<li>Use the IAM policy simulator to check a policy before you attach it to anyone.</li>
+<li>Grant the action, not the whole service: <code>s3:GetObject</code> is not <code>s3:*</code>.</li>
+</ul>
+<h2>Pitfalls</h2>
+<ul>
+<li>Using <code>&quot;Resource&quot;: &quot;*&quot;</code> and calling it least privilege.</li>
+<li>Testing only the granted action and never confirming that something else is denied.</li>
+<li>Enabling MFA but never enrolling a device, so the user is locked out or left unprotected.</li>
+</ul>
+<h2>Done check</h2>
+<p>paste the policy JSON + the MFA status line.</p>
+<h2>Links</h2>
+<ul>
+<li>Grant least privilege: https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html#grant-least-privilege</li>
+<li>MFA in IAM: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_mfa.html</li>
+<li>IAM JSON policy reference: https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies.html</li>
+</ul>
+</article>
+<div class="nav"><span><a class="nav-btn" href="T.2.html">← T.2 IAM users, groups, policies</a></span><span><a class="nav-btn" href="T.4.html">T.4 Budgets and alarms →</a></span></div>
+<footer>Source: <code>quests/T.3.md</code> · re-run <code>python3 shared/render_dashboard.py</code> after editing.</footer>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>T.8 API Gateway authorizer — Cloud Dojo</title>
+<style>:root{--bg:#0d1117;--card:#161b22;--line:#30363d;--txt:#e6edf3;
+--mut:#8b949e;--grn:#3fb950;--amb:#d29922;--blu:#58a6ff;--pur:#bc8cff}
+*{box-sizing:border-box}body{background:var(--bg);color:var(--txt);
+font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;margin:0;
+padding:24px;max-width:860px;margin-inline:auto;line-height:1.6}
+.crumb{margin-bottom:14px;font-size:.9rem}.crumb a{color:var(--blu);text-decoration:none}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:18px}
+.hero h1{font-size:1.4rem;margin:0 0 6px}.meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+color:var(--mut);font-size:.9rem}
+.pill{padding:2px 10px;border-radius:999px;font-size:.8rem;border:1px solid var(--line)}
+.pill.done{color:var(--grn);border-color:var(--grn)}.pill.active{color:var(--amb);border-color:var(--amb)}
+.pill.locked{color:var(--mut)}
+article{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+article h2{font-size:1.05rem;margin:20px 0 8px;color:var(--blu)}article h2:first-child{margin-top:0}
+article p{margin:8px 0}article ul{margin:8px 0;padding-left:22px}article li{margin:4px 0}
+article a{color:var(--blu)}code{background:#21262d;padding:2px 6px;border-radius:6px;
+font-family:ui-monospace,monospace;font-size:.88em}
+pre{background:#010409;border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
+pre code{background:none;padding:0}
+.nav{display:flex;justify-content:space-between;gap:12px;margin:18px 0;flex-wrap:wrap}
+.nav-btn{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 14px;
+color:var(--txt);text-decoration:none;font-size:.9rem}.nav-btn:hover{border-color:var(--blu)}
+footer{color:var(--mut);font-size:.85rem;margin-top:16px}footer code{background:#21262d;
+padding:2px 6px;border-radius:6px}</style>
+</head>
+<body>
+<div class="crumb"><a href="../dashboard.html">← Cloud Dojo dashboard</a> · Track T — Real-AWS Parallel Track</div>
+<div class="hero">
+<h1>T.8 — API Gateway authorizer</h1>
+<div class="meta"><span class="pill locked">🔒 locked</span><span>25 XP</span><span>Track T — Real-AWS Parallel Track</span></div>
+</div>
+<article>
+<h1>T.8 — API Gateway authorizer (25 XP)</h1>
+<p><strong>Phase:</strong> Track T — Real-AWS Parallel Track</p>
+<h2>Concept</h2>
+<p>An API in front of a Lambda is only as safe as its front door.</p>
+<p>API Gateway authorizers validate callers before your function runs, so rejected requests never cost you a Lambda invocation or a downstream model call.</p>
+<p>A JWT authorizer checks a bearer token from an identity provider like Cognito, while an IAM authorizer checks SigV4-signed AWS calls.</p>
+<p>In this quest you put a JWT (or IAM) authorizer on an HTTP API in front of a Lambda and prove both paths: a valid token returns 200 with the answer, and a missing or invalid token returns 401 or 403.</p>
+<p>This gate is the exact pattern the final capstone reuses, and it only behaves truthfully on real AWS, never on an emulator.</p>
+<h2>Uses</h2>
+<ul>
+<li>Protecting serverless APIs so only authenticated callers reach the backend.</li>
+<li>Rejecting bad tokens cheaply before any compute or model cost is incurred.</li>
+<li>Reusing one identity provider across many APIs.</li>
+<li>Throttling and quota-gating expensive AI endpoints behind authentication.</li>
+<li>Giving the RAG capstone a secure front door it can build on.</li>
+</ul>
+<h2>Key info</h2>
+<ul>
+<li>Create an HTTP API with a Lambda integration, then attach a JWT authorizer (issuer URL plus audience) or an IAM authorizer.</li>
+<li>Valid call: <code>curl -H &quot;Authorization: Bearer &lt;valid-token&gt;&quot; https://&lt;api&gt;/endpoint</code> returns 200.</li>
+<li>Invalid call: the same request with a missing or bad token returns 401 or 403.</li>
+<li>JWT authorizers need an issuer and an audience; IAM authorizers need SigV4-signed requests.</li>
+<li>The order that matters: auth first, throttle second, validate third.</li>
+<li>Real AWS enforces this gate. The emulator does not.</li>
+<li>Authorizers reject before your integration runs, so a 401 never reaches the Lambda.</li>
+<li>Return 401 for a missing or invalid token and 403 when the token is valid but lacks permission.</li>
+</ul>
+<h2>Pitfalls</h2>
+<ul>
+<li>Leaving the route open with no authorizer and thinking the Lambda&#x27;s own checks are enough.</li>
+<li>Using an expired token and concluding the authorizer is broken.</li>
+<li>Testing only the happy path, so a misconfigured gate lets bad requests through unnoticed.</li>
+</ul>
+<h2>Done check</h2>
+<p>paste both <code>curl</code> outputs. This gate is what Q8.3 will reuse.</p>
+<h2>Links</h2>
+<ul>
+<li>JWT authorizers: https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-jwt-authorizer.html</li>
+<li>IAM authorization for HTTP APIs: https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-access-control-iam.html</li>
+<li>Lambda authorizers: https://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-use-lambda-authorizer.html</li>
+</ul>
+</article>
+<div class="nav"><span><a class="nav-btn" href="T.7.html">← T.7 CloudWatch observability</a></span><span></span></div>
+<footer>Source: <code>quests/T.8.md</code> · re-run <code>python3 shared/render_dashboard.py</code> after editing.</footer>
+</body>
+</html>

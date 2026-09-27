@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>T.5 Secrets Manager: no hardcoded keys — Cloud Dojo</title>
+<style>:root{--bg:#0d1117;--card:#161b22;--line:#30363d;--txt:#e6edf3;
+--mut:#8b949e;--grn:#3fb950;--amb:#d29922;--blu:#58a6ff;--pur:#bc8cff}
+*{box-sizing:border-box}body{background:var(--bg);color:var(--txt);
+font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;margin:0;
+padding:24px;max-width:860px;margin-inline:auto;line-height:1.6}
+.crumb{margin-bottom:14px;font-size:.9rem}.crumb a{color:var(--blu);text-decoration:none}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:18px}
+.hero h1{font-size:1.4rem;margin:0 0 6px}.meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+color:var(--mut);font-size:.9rem}
+.pill{padding:2px 10px;border-radius:999px;font-size:.8rem;border:1px solid var(--line)}
+.pill.done{color:var(--grn);border-color:var(--grn)}.pill.active{color:var(--amb);border-color:var(--amb)}
+.pill.locked{color:var(--mut)}
+article{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+article h2{font-size:1.05rem;margin:20px 0 8px;color:var(--blu)}article h2:first-child{margin-top:0}
+article p{margin:8px 0}article ul{margin:8px 0;padding-left:22px}article li{margin:4px 0}
+article a{color:var(--blu)}code{background:#21262d;padding:2px 6px;border-radius:6px;
+font-family:ui-monospace,monospace;font-size:.88em}
+pre{background:#010409;border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
+pre code{background:none;padding:0}
+.nav{display:flex;justify-content:space-between;gap:12px;margin:18px 0;flex-wrap:wrap}
+.nav-btn{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 14px;
+color:var(--txt);text-decoration:none;font-size:.9rem}.nav-btn:hover{border-color:var(--blu)}
+footer{color:var(--mut);font-size:.85rem;margin-top:16px}footer code{background:#21262d;
+padding:2px 6px;border-radius:6px}</style>
+</head>
+<body>
+<div class="crumb"><a href="../dashboard.html">← Cloud Dojo dashboard</a> · Track T — Real-AWS Parallel Track</div>
+<div class="hero">
+<h1>T.5 — Secrets Manager: no hardcoded keys</h1>
+<div class="meta"><span class="pill locked">🔒 locked</span><span>25 XP</span><span>Track T — Real-AWS Parallel Track</span></div>
+</div>
+<article>
+<h1>T.5 — Secrets Manager: no hardcoded keys (25 XP)</h1>
+<p><strong>Phase:</strong> Track T — Real-AWS Parallel Track</p>
+<h2>Concept</h2>
+<p>Hardcoding passwords and keys into code or config is how secrets leak.</p>
+<p>Secrets Manager stores those values centrally, encrypts them, and hands them to code at runtime with an IAM check on every read.</p>
+<p>Your code never contains the value, and your repository never sees it.</p>
+<p>In this quest you store a database password in Secrets Manager and read it back from a Lambda function, or from the CLI with a policy that allows it.</p>
+<p>Then you rotate the secret once and prove the old value stops working while the function keeps reading the new one.</p>
+<p>Rotation without downtime is the real skill here, not the storage. This runs on real AWS, never an emulator, because the IAM check is the whole point.</p>
+<h2>Uses</h2>
+<ul>
+<li>Keeping database credentials and API keys out of source control.</li>
+<li>Rotating secrets automatically without redeploying code.</li>
+<li>Auditing secret access through CloudTrail.</li>
+<li>Feeding application config to Lambda or containers at runtime.</li>
+<li>Reducing the blast radius when a key leaks, since rotation kills the old value.</li>
+</ul>
+<h2>Key info</h2>
+<ul>
+<li>Store a secret: <code>aws secretsmanager create-secret --name dojo/db --secret-string &#x27;{&quot;password&quot;:&quot;...&quot;}&#x27;</code></li>
+<li>Read it: <code>aws secretsmanager get-secret-value --secret-id dojo/db</code></li>
+<li>Grant the reading role <code>secretsmanager:GetSecretValue</code> on the secret&#x27;s ARN.</li>
+<li>Rotate: <code>aws secretsmanager rotate-secret --secret-id dojo/db</code>, or enable automatic rotation with a Lambda rotator.</li>
+<li>After rotation, the old value fails and the function still works with the new one.</li>
+<li>This is real AWS only. The emulator does not enforce the IAM read check that makes this meaningful.</li>
+<li>Retrieve the secret inside the handler at runtime, not at build time.</li>
+<li>Enable automatic rotation so the value changes on a schedule instead of on a bad day.</li>
+</ul>
+<h2>Pitfalls</h2>
+<ul>
+<li>Printing the secret value into logs or <code>out.json</code>, which defeats the point.</li>
+<li>Forgetting to grant <code>GetSecretValue</code>, so the function fails with <code>AccessDenied</code>.</li>
+<li>Caching the secret forever in memory and missing a rotation, which causes the outage rotation is supposed to prevent.</li>
+</ul>
+<h2>Done check</h2>
+<p>paste the rotation output + the function&#x27;s successful read post-rotation.</p>
+<h2>Links</h2>
+<ul>
+<li>Rotating secrets: https://docs.aws.amazon.com/secretsmanager/latest/userguide/rotating-secrets.html</li>
+<li><code>get-secret-value</code> reference: https://docs.aws.amazon.com/cli/latest/reference/secretsmanager/get-secret-value.html</li>
+<li>Secrets Manager best practices: https://docs.aws.amazon.com/secretsmanager/latest/userguide/best-practices.html</li>
+</ul>
+</article>
+<div class="nav"><span><a class="nav-btn" href="T.4.html">← T.4 Budgets and alarms</a></span><span><a class="nav-btn" href="T.6.html">T.6 KMS + SSM Parameter Store →</a></span></div>
+<footer>Source: <code>quests/T.5.md</code> · re-run <code>python3 shared/render_dashboard.py</code> after editing.</footer>
+</body>
+</html>

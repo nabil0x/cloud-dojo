@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>M.1 First mocked test — Cloud Dojo</title>
+<style>:root{--bg:#0d1117;--card:#161b22;--line:#30363d;--txt:#e6edf3;
+--mut:#8b949e;--grn:#3fb950;--amb:#d29922;--blu:#58a6ff;--pur:#bc8cff}
+*{box-sizing:border-box}body{background:var(--bg);color:var(--txt);
+font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;margin:0;
+padding:24px;max-width:860px;margin-inline:auto;line-height:1.6}
+.crumb{margin-bottom:14px;font-size:.9rem}.crumb a{color:var(--blu);text-decoration:none}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:18px}
+.hero h1{font-size:1.4rem;margin:0 0 6px}.meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+color:var(--mut);font-size:.9rem}
+.pill{padding:2px 10px;border-radius:999px;font-size:.8rem;border:1px solid var(--line)}
+.pill.done{color:var(--grn);border-color:var(--grn)}.pill.active{color:var(--amb);border-color:var(--amb)}
+.pill.locked{color:var(--mut)}
+article{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+article h2{font-size:1.05rem;margin:20px 0 8px;color:var(--blu)}article h2:first-child{margin-top:0}
+article p{margin:8px 0}article ul{margin:8px 0;padding-left:22px}article li{margin:4px 0}
+article a{color:var(--blu)}code{background:#21262d;padding:2px 6px;border-radius:6px;
+font-family:ui-monospace,monospace;font-size:.88em}
+pre{background:#010409;border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
+pre code{background:none;padding:0}
+.nav{display:flex;justify-content:space-between;gap:12px;margin:18px 0;flex-wrap:wrap}
+.nav-btn{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 14px;
+color:var(--txt);text-decoration:none;font-size:.9rem}.nav-btn:hover{border-color:var(--blu)}
+footer{color:var(--mut);font-size:.85rem;margin-top:16px}footer code{background:#21262d;
+padding:2px 6px;border-radius:6px}</style>
+</head>
+<body>
+<div class="crumb"><a href="../dashboard.html">← Cloud Dojo dashboard</a> · Module M — Moto Testing</div>
+<div class="hero">
+<h1>M.1 — First mocked test</h1>
+<div class="meta"><span class="pill locked">🔒 locked</span><span>15 XP</span><span>Module M — Moto Testing</span></div>
+</div>
+<article>
+<h1>M.1 — First mocked test (15 XP)</h1>
+<p><strong>Phase:</strong> Module M — Moto Testing</p>
+<h2>Concept</h2>
+<p>Moto is an in-process mock library that intercepts boto3 and botocore calls and serves them from memory. With the <code>@mock_aws</code> decorator, your AWS-touching code runs against a fake S3 with no network, no account, and millisecond speed.</p>
+<p>You write a small function that creates a bucket and uploads a file, then test it by creating the bucket, uploading, reading the object back, and asserting the bytes match. The point is to test your logic fast and offline, not to prove that AWS will behave. Keep the AWS code behind thin functions so the test stays tiny.</p>
+<h2>Uses</h2>
+<ul>
+<li>Run a fast unit-test suite for AWS code on every save.</li>
+<li>Test S3 upload and download logic with no credentials or internet.</li>
+<li>Exercise error paths that are hard to trigger against real AWS.</li>
+<li>Keep CI cheap and deterministic with no cloud dependency.</li>
+<li>Catch regressions in your own glue code before integration tests.</li>
+</ul>
+<h2>Key info</h2>
+<ul>
+<li>Install the pieces: <code>pip install &#x27;moto[s3]&#x27; pytest boto3</code>.</li>
+<li>Decorate the test function with <code>@mock_aws</code>.</li>
+<li>Inside the mock, <code>boto3.client(&quot;s3&quot;, region_name=&quot;us-east-1&quot;)</code> works with no real creds.</li>
+<li>Keep functions thin: create, upload, read, so tests stay short.</li>
+<li>Assert on behavior, for example &quot;the object reads back with the same bytes&quot;, not on mock internals.</li>
+<li>The test file must be under 30 lines to count for this quest.</li>
+<li>A context-manager form exists too: <code>with mock_aws(): ...</code>.</li>
+<li>Coverage is per-operation; check your service before trusting it.</li>
+<li><code>@mock_aws</code> covers S3, SQS, SNS, DynamoDB, and 160+ other services.</li>
+<li>Use <code>with mock_aws():</code> as a context manager when a decorator isn&#x27;t convenient.</li>
+<li>Keep the AWS-touching function in its own module so the test imports it cleanly.</li>
+</ul>
+<h2>Pitfalls</h2>
+<ul>
+<li>Forgetting <code>@mock_aws</code>, so calls try real AWS and fail or hang on missing credentials.</li>
+<li>Testing mock internals instead of your own code&#x27;s behavior, which breaks the moment you swap harnesses.</li>
+<li>Believing a green mock proves AWS will behave the same; it doesn&#x27;t, which is exactly what M.3 addresses.</li>
+</ul>
+<h2>Done check</h2>
+<p>paste <code>pytest -v</code> showing 1 passed + the test file (under 30 lines to count).</p>
+<h2>Links</h2>
+<ul>
+<li>Moto getting started — https://docs.getmoto.org/en/latest/docs/getting_started.html</li>
+<li>moto mock_aws API — https://docs.getmoto.org/en/latest/docs/moto_api.html</li>
+<li>pytest documentation — https://docs.pytest.org/en/stable/</li>
+</ul>
+</article>
+<div class="nav"><span><a class="nav-btn" href="Q8.5.html">← Q8.5 👹 Boss: demo + demolish + retro</a></span><span><a class="nav-btn" href="M.2.html">M.2 Fixtures: DynamoDB + SQS →</a></span></div>
+<footer>Source: <code>quests/M.1.md</code> · re-run <code>python3 shared/render_dashboard.py</code> after editing.</footer>
+</body>
+</html>
