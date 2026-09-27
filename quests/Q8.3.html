@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Q8.3 Hardened API: auth, throttle, CORS — Cloud Dojo</title>
+<style>:root{--bg:#0d1117;--card:#161b22;--line:#30363d;--txt:#e6edf3;
+--mut:#8b949e;--grn:#3fb950;--amb:#d29922;--blu:#58a6ff;--pur:#bc8cff}
+*{box-sizing:border-box}body{background:var(--bg);color:var(--txt);
+font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;margin:0;
+padding:24px;max-width:860px;margin-inline:auto;line-height:1.6}
+.crumb{margin-bottom:14px;font-size:.9rem}.crumb a{color:var(--blu);text-decoration:none}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:18px}
+.hero h1{font-size:1.4rem;margin:0 0 6px}.meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+color:var(--mut);font-size:.9rem}
+.pill{padding:2px 10px;border-radius:999px;font-size:.8rem;border:1px solid var(--line)}
+.pill.done{color:var(--grn);border-color:var(--grn)}.pill.active{color:var(--amb);border-color:var(--amb)}
+.pill.locked{color:var(--mut)}
+article{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+article h2{font-size:1.05rem;margin:20px 0 8px;color:var(--blu)}article h2:first-child{margin-top:0}
+article p{margin:8px 0}article ul{margin:8px 0;padding-left:22px}article li{margin:4px 0}
+article a{color:var(--blu)}code{background:#21262d;padding:2px 6px;border-radius:6px;
+font-family:ui-monospace,monospace;font-size:.88em}
+pre{background:#010409;border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
+pre code{background:none;padding:0}
+.nav{display:flex;justify-content:space-between;gap:12px;margin:18px 0;flex-wrap:wrap}
+.nav-btn{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 14px;
+color:var(--txt);text-decoration:none;font-size:.9rem}.nav-btn:hover{border-color:var(--blu)}
+footer{color:var(--mut);font-size:.85rem;margin-top:16px}footer code{background:#21262d;
+padding:2px 6px;border-radius:6px}</style>
+</head>
+<body>
+<div class="crumb"><a href="../dashboard.html">← Cloud Dojo dashboard</a> · Phase 8 — RAG Capstone</div>
+<div class="hero">
+<h1>Q8.3 — Hardened API: auth, throttle, CORS</h1>
+<div class="meta"><span class="pill locked">🔒 locked</span><span>40 XP</span><span>Phase 8 — RAG Capstone</span></div>
+</div>
+<article>
+<h1>Q8.3 — Hardened API: auth, throttle, CORS (40 XP)</h1>
+<p><strong>Phase:</strong> Phase 8 — RAG Capstone</p>
+<h2>Concept</h2>
+<p>An endpoint that answers questions is also an endpoint that spends money, so it has to be defended. This quest puts a Lambda behind an API Gateway HTTP API and hardens the front door.</p>
+<p>The Lambda does the orchestration: take the query, retrieve from the knowledge base, call the model, and return JSON with citations. The gateway adds the protections: an authorizer (JWT or IAM) on every route so anonymous callers cannot burn your budget, throttling so one abusive client cannot, CORS locked to exact origins, and input validation with a max length because tokens are money.</p>
+<p>Timeouts matter too and they cascade: the gateway has a hard limit, the function can run far longer, and the model call sits inside that. Set each one deliberately or the defaults will surprise you mid-demo.</p>
+<h2>Uses</h2>
+<ul>
+<li>Auth gating: only authorized callers reach the retrieval and model spend.</li>
+<li>Abuse control: per-route rate limits cap the damage from a runaway client.</li>
+<li>Browser safety: exact-origin CORS lets your frontend call the API without opening it to the world.</li>
+<li>Cost protection: input length caps stop a giant prompt from multiplying token cost.</li>
+<li>Predictable failures: deliberate timeouts fail cleanly instead of hanging the demo.</li>
+</ul>
+<h2>Key info</h2>
+<ul>
+<li>Handler shape: parse the query, validate length, retrieve from the KB, generate with the model, return <code>{ &quot;answer&quot;: ..., &quot;citations&quot;: [...] }</code>.</li>
+<li>Attach an authorizer and set limits on the route:</li>
+</ul>
+<pre><code>
+# JWT or IAM authorizer on every route; then:
+aws apigatewayv2 update-stage --api-id &lt;id&gt; --stage-name prod \
+  --default-route-settings &#x27;{&quot;ThrottlingBurstLimit&quot;:20,&quot;ThrottlingRateLimit&quot;:10}&#x27;
+</code></pre>
+<ul>
+<li>CORS: use exact origins. Never combine <code>*</code> with credentials.</li>
+<li>Timeout cascade to set on purpose: gateway (roughly 29 seconds max) below the function timeout, and the function timeout below what the model call can take.</li>
+<li>Prove the gate works: an authorized <code>curl</code> returns a cited answer, an unauthorized one returns 401 or 403.</li>
+<li>A JWT or IAM authorizer ties back to Track T; the IAM path pays off here.</li>
+</ul>
+<h2>Pitfalls</h2>
+<ul>
+<li>No authorizer on a route, so anyone with the URL spends your Bedrock budget.</li>
+<li>CORS set to <code>*</code> while sending credentials, which browsers reject and which leaks to any origin.</li>
+<li>No max input length, so a single huge prompt multiplies token cost and slips past throttle limits.</li>
+</ul>
+<h2>Done check</h2>
+<p>paste <code>curl</code> of the live endpoint returning a cited answer + the auth-rejected <code>curl</code> (401/403) proving the gate works.</p>
+<h2>Links</h2>
+<ul>
+<li>API Gateway HTTP APIs — https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api.html</li>
+<li>Controlling access with authorizers — https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-access-control.html</li>
+<li>Throttling — https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-throttling.html</li>
+</ul>
+</article>
+<div class="nav"><span><a class="nav-btn" href="Q8.2.html">← Q8.2 Data + retrieval, 5-question eval</a></span><span><a class="nav-btn" href="Q8.4.html">Q8.4 Everything in Terraform via pipeline →</a></span></div>
+<footer>Source: <code>quests/Q8.3.md</code> · re-run <code>python3 shared/render_dashboard.py</code> after editing.</footer>
+</body>
+</html>

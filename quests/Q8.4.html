@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Q8.4 Everything in Terraform via pipeline — Cloud Dojo</title>
+<style>:root{--bg:#0d1117;--card:#161b22;--line:#30363d;--txt:#e6edf3;
+--mut:#8b949e;--grn:#3fb950;--amb:#d29922;--blu:#58a6ff;--pur:#bc8cff}
+*{box-sizing:border-box}body{background:var(--bg);color:var(--txt);
+font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;margin:0;
+padding:24px;max-width:860px;margin-inline:auto;line-height:1.6}
+.crumb{margin-bottom:14px;font-size:.9rem}.crumb a{color:var(--blu);text-decoration:none}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:18px}
+.hero h1{font-size:1.4rem;margin:0 0 6px}.meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+color:var(--mut);font-size:.9rem}
+.pill{padding:2px 10px;border-radius:999px;font-size:.8rem;border:1px solid var(--line)}
+.pill.done{color:var(--grn);border-color:var(--grn)}.pill.active{color:var(--amb);border-color:var(--amb)}
+.pill.locked{color:var(--mut)}
+article{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px}
+article h2{font-size:1.05rem;margin:20px 0 8px;color:var(--blu)}article h2:first-child{margin-top:0}
+article p{margin:8px 0}article ul{margin:8px 0;padding-left:22px}article li{margin:4px 0}
+article a{color:var(--blu)}code{background:#21262d;padding:2px 6px;border-radius:6px;
+font-family:ui-monospace,monospace;font-size:.88em}
+pre{background:#010409;border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
+pre code{background:none;padding:0}
+.nav{display:flex;justify-content:space-between;gap:12px;margin:18px 0;flex-wrap:wrap}
+.nav-btn{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 14px;
+color:var(--txt);text-decoration:none;font-size:.9rem}.nav-btn:hover{border-color:var(--blu)}
+footer{color:var(--mut);font-size:.85rem;margin-top:16px}footer code{background:#21262d;
+padding:2px 6px;border-radius:6px}</style>
+</head>
+<body>
+<div class="crumb"><a href="../dashboard.html">← Cloud Dojo dashboard</a> · Phase 8 — RAG Capstone</div>
+<div class="hero">
+<h1>Q8.4 — Everything in Terraform via pipeline</h1>
+<div class="meta"><span class="pill locked">🔒 locked</span><span>50 XP</span><span>Phase 8 — RAG Capstone</span></div>
+</div>
+<article>
+<h1>Q8.4 — Everything in Terraform via pipeline (50 XP)</h1>
+<p><strong>Phase:</strong> Phase 8 — RAG Capstone</p>
+<h2>Concept</h2>
+<p>Reproducibility is the difference between a project and a demo. This quest takes everything from the data and API quests and expresses it in Terraform, then deploys it through the Phase 7 pipeline.</p>
+<p>The real test is destroy and rebuild: you tear the whole system down, then let CI re-apply it, and the system comes back byte for byte, still answering requests. If anything has to be rebuilt by hand after a destroy, it was never really in Terraform, and that gap is tech debt with a demo date.</p>
+<p>Pinning is what makes &quot;byte for byte&quot; true: exact model IDs, container image SHAs, and provider versions. Anywhere you write <code>latest</code>, you get &quot;works today, mystery tomorrow.&quot; This is the highest-XP quest in the dojo because it is where the earlier phases prove they compose.</p>
+<h2>Uses</h2>
+<ul>
+<li>One source of truth: the whole system is described, reviewable, and versioned.</li>
+<li>Disaster recovery: destroy and rebuild from CI proves the config is complete.</li>
+<li>Environment cloning: spin the same stack up elsewhere from the same code.</li>
+<li>Auditable change: every infrastructure change is a reviewed diff.</li>
+<li>Interview signal: reproducible systems separate engineers from tinkerers.</li>
+</ul>
+<h2>Key info</h2>
+<ul>
+<li>Run Terraform from CI, not your laptop:</li>
+</ul>
+<pre><code>
+terraform init
+terraform plan -out=tfplan
+terraform apply tfplan
+# break it on purpose:
+terraform destroy -auto-approve
+terraform apply -auto-approve
+</code></pre>
+<ul>
+<li>Pin everything: <code>required_providers</code> versions, model IDs, and image tags by SHA.</li>
+<li>Store state remotely (for example S3 with locking) so CI and you share one state, not two laptops.</li>
+<li>After the rebuild, <code>curl</code> the live endpoint again. Still answering with citations is the proof.</li>
+<li>The pipeline needs permission to run plan and apply; scope that role to the resources it manages.</li>
+</ul>
+<h2>Pitfalls</h2>
+<ul>
+<li>Anything created by hand in the console. If it is not in Terraform, it does not exist and will not rebuild.</li>
+<li>Writing <code>latest</code> for a model or image, so a rebuild silently changes behavior.</li>
+<li>Keeping state only on a local machine, so CI applies against a different, blank world.</li>
+</ul>
+<h2>Done check</h2>
+<p>paste the destroy log + the CI re-apply log + the post-rebuild <code>curl</code> still answering.</p>
+<h2>Links</h2>
+<ul>
+<li>Terraform in automation — https://developer.hashicorp.com/terraform/tutorials/automation</li>
+<li>S3 backend for state — https://developer.hashicorp.com/terraform/language/backend/s3</li>
+<li>Bedrock resources in Terraform — https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/bedrockagent_knowledge_base</li>
+</ul>
+</article>
+<div class="nav"><span><a class="nav-btn" href="Q8.3.html">← Q8.3 Hardened API: auth, throttle, CORS</a></span><span><a class="nav-btn" href="Q8.5.html">Q8.5 👹 Boss: demo + demolish + retro →</a></span></div>
+<footer>Source: <code>quests/Q8.4.md</code> · re-run <code>python3 shared/render_dashboard.py</code> after editing.</footer>
+</body>
+</html>
